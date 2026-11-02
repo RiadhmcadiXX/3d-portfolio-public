@@ -1,144 +1,360 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { ContactShadows, Environment, Lightformer } from "@react-three/drei";
+import { ContactShadows, Environment, Lightformer, useAnimations, useGLTF } from "@react-three/drei";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import * as THREE from "three";
 import { Model } from "./Model";
 import { STATIONS, OBSTACLES, type Station } from "@/game/stations";
+import { experience } from "@/content/portfolio";
 import { EYE_HEIGHT, INTERACT_DISTANCE, step, type Player } from "@/game/sim";
 
 const PALETTE = {
-  wall: "#efe6d8",
-  wallAccent: "#c8643f",
-  trim: "#3b2f2a",
-  sky: "#f6d7b0",
+  wall: "#f6f8fb",
+  wallAccent: "#2f6fd6",
+  trim: "#1d3557",
+  sky: "#cfe6ff",
+  navy: "#1d3557",
 };
+const W = 9;
+const D = 7;
+const H = 3;
 
 type Input = { keys: Set<string>; touch: { fwd: number; strafe: number } };
+type Pulse = { id: string; t: number } | null;
 
-function plankTexture() {
+function floorTexture() {
   const c = document.createElement("canvas");
   c.width = 512;
   c.height = 512;
   const g = c.getContext("2d")!;
-  const rows = 8;
-  for (let r = 0; r < rows; r++) {
+  for (let r = 0; r < 8; r++) {
     let x = -((r * 137) % 256);
     while (x < 512) {
-      const w = 180 + ((r * 53 + x) % 140);
-      const l = 52 + ((r * 31 + x * 7) % 12);
-      g.fillStyle = `hsl(28 42% ${l}%)`;
+      const w = 200 + ((r * 53 + x) % 140);
+      const l = 86 + ((r * 31 + x * 7) % 6);
+      g.fillStyle = `hsl(35 18% ${l}%)`;
       g.fillRect(x, r * 64, w, 64);
-      g.strokeStyle = "rgba(60,35,20,0.35)";
+      g.strokeStyle = "rgba(80,90,110,0.18)";
       g.lineWidth = 2;
       g.strokeRect(x, r * 64, w, 64);
-      for (let i = 0; i < 6; i++) {
-        g.strokeStyle = "rgba(90,50,25,0.08)";
-        g.beginPath();
-        g.moveTo(x, r * 64 + 8 + i * 9);
-        g.lineTo(x + w, r * 64 + 10 + i * 9);
-        g.stroke();
-      }
       x += w;
     }
   }
   const t = new THREE.CanvasTexture(c);
   t.wrapS = t.wrapT = THREE.RepeatWrapping;
-  t.repeat.set(9, 6);
+  t.repeat.set(5, 4);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = 8;
+  return t;
+}
+
+function pinboardTexture() {
+  const c = document.createElement("canvas");
+  c.width = 1024;
+  c.height = 640;
+  const g = c.getContext("2d")!;
+  g.fillStyle = "#e9eef5";
+  g.fillRect(0, 0, 1024, 640);
+  for (let i = 0; i < 1400; i++) {
+    g.fillStyle = `rgba(29,53,87,${Math.random() * 0.05})`;
+    g.fillRect(Math.random() * 1024, Math.random() * 640, 3, 3);
+  }
+  g.fillStyle = "#1d3557";
+  g.font = "600 44px sans-serif";
+  g.fillText("CAREER TIMELINE", 60, 80);
+  g.strokeStyle = "#2f6fd6";
+  g.lineWidth = 6;
+  g.beginPath();
+  g.moveTo(80, 330);
+  g.lineTo(950, 330);
+  g.stroke();
+  const items = experience.slice().reverse();
+  items.forEach((e, i) => {
+    const x = 70 + i * 310;
+    const y = i % 2 ? 360 : 130;
+    g.save();
+    g.translate(x + 130, y + 90);
+    g.rotate((i - 1) * 0.04);
+    g.fillStyle = i % 2 ? "#ffffff" : "#dbe9ff";
+    g.shadowColor = "rgba(0,0,0,0.2)";
+    g.shadowBlur = 12;
+    g.fillRect(-130, -90, 260, 180);
+    g.shadowBlur = 0;
+    g.fillStyle = "#2f6fd6";
+    g.beginPath();
+    g.arc(0, -78, 10, 0, Math.PI * 2);
+    g.fill();
+    g.fillStyle = "#1d3557";
+    g.font = "600 24px sans-serif";
+    g.fillText(e.years, -112, -36);
+    g.font = "700 26px sans-serif";
+    g.fillText(e.company, -112, 4, 230);
+    g.font = "20px sans-serif";
+    g.fillText(e.role, -112, 40, 230);
+    g.restore();
+    g.fillStyle = "#2f6fd6";
+    g.beginPath();
+    g.arc(x + 130, 330, 12, 0, Math.PI * 2);
+    g.fill();
+  });
+  const t = new THREE.CanvasTexture(c);
   t.colorSpace = THREE.SRGBColorSpace;
   t.anisotropy = 8;
   return t;
 }
 
 function Room() {
-  const floor = useMemo(plankTexture, []);
+  const floor = useMemo(floorTexture, []);
   return (
     <group>
       <mesh rotation-x={-Math.PI / 2} receiveShadow>
-        <planeGeometry args={[14, 10]} />
-        <meshStandardMaterial map={floor} roughness={0.75} />
+        <planeGeometry args={[W, D]} />
+        <meshStandardMaterial map={floor} roughness={0.6} />
       </mesh>
-      {/* back wall with accent */}
-      <mesh position={[0, 1.75, -5.05]} receiveShadow>
-        <boxGeometry args={[14.2, 3.5, 0.1]} />
-        <meshStandardMaterial color={PALETTE.wallAccent} roughness={0.9} />
+      {/* back wall: blue accent */}
+      <mesh position={[0, H / 2, -D / 2 - 0.05]} receiveShadow>
+        <boxGeometry args={[W + 0.2, H, 0.1]} />
+        <meshStandardMaterial color={PALETTE.wallAccent} roughness={0.85} />
       </mesh>
-      <mesh position={[0, 1.75, 5.05]}>
-        <boxGeometry args={[14.2, 3.5, 0.1]} />
+      <mesh position={[0, H / 2, D / 2 + 0.05]}>
+        <boxGeometry args={[W + 0.2, H, 0.1]} />
         <meshStandardMaterial color={PALETTE.wall} roughness={0.95} />
       </mesh>
-      <mesh position={[-7.05, 1.75, 0]}>
-        <boxGeometry args={[0.1, 3.5, 10.2]} />
+      <mesh position={[-W / 2 - 0.05, H / 2, 0]} receiveShadow>
+        <boxGeometry args={[0.1, H, D + 0.2]} />
         <meshStandardMaterial color={PALETTE.wall} roughness={0.95} />
       </mesh>
-      {/* right wall with two windows */}
-      <mesh position={[7.05, 1.75, 0]}>
-        <boxGeometry args={[0.1, 3.5, 10.2]} />
+      <mesh position={[W / 2 + 0.05, H / 2, 0]}>
+        <boxGeometry args={[0.1, H, D + 0.2]} />
         <meshStandardMaterial color={PALETTE.wall} roughness={0.95} />
       </mesh>
-      {[-3.2, 3.6].map((z) => (
-        <group key={z} position={[6.99, 1.9, z]}>
-          <mesh>
-            <planeGeometry args={[2.2, 1.6]} />
-            <meshBasicMaterial color={PALETTE.sky} side={THREE.DoubleSide} />
+      {/* big window on right wall */}
+      <group position={[W / 2 - 0.01, 1.65, 0.2]}>
+        <mesh rotation-y={-Math.PI / 2}>
+          <planeGeometry args={[3.2, 1.7]} />
+          <meshBasicMaterial color={PALETTE.sky} />
+        </mesh>
+        {[-1.6, 0, 1.6].map((z) => (
+          <mesh key={z} position={[-0.03, 0, z]}>
+            <boxGeometry args={[0.06, 1.75, 0.06]} />
+            <meshStandardMaterial color={PALETTE.wall} />
           </mesh>
-          <mesh position={[-0.02, 0, 0]} rotation-y={-Math.PI / 2}>
-            <boxGeometry args={[2.3, 0.08, 0.06]} />
-            <meshStandardMaterial color={PALETTE.trim} />
+        ))}
+      </group>
+      <mesh position={[0, H, 0]} rotation-x={Math.PI / 2}>
+        <planeGeometry args={[W, D]} />
+        <meshStandardMaterial color="#ffffff" emissive="#eef4ff" emissiveIntensity={0.5} side={THREE.DoubleSide} />
+      </mesh>
+      {/* ceiling light strips */}
+      {[-1.5, 1.5].map((z) => (
+        <mesh key={z} position={[0, H - 0.02, z]} rotation-x={Math.PI / 2}>
+          <planeGeometry args={[5, 0.12]} />
+          <meshBasicMaterial color="#ffffff" side={THREE.DoubleSide} />
+        </mesh>
+      ))}
+      {/* skirting */}
+      {[
+        [0, -D / 2 + 0.02, W, 0],
+        [-W / 2 + 0.02, 0, D, Math.PI / 2],
+      ].map(([x, z, len, r], i) => (
+        <mesh key={i} position={[x, 0.05, z]} rotation-y={r}>
+          <boxGeometry args={[len, 0.1, 0.03]} />
+          <meshStandardMaterial color={PALETTE.navy} />
+        </mesh>
+      ))}
+      {/* rug */}
+      <mesh rotation-x={-Math.PI / 2} position={[0.3, 0.004, 0.3]} receiveShadow>
+        <planeGeometry args={[3.4, 2.4]} />
+        <meshStandardMaterial color="#c9dbf3" roughness={1} />
+      </mesh>
+    </group>
+  );
+}
+
+function Pinboard() {
+  const tex = useMemo(pinboardTexture, []);
+  return (
+    <group position={[-W / 2 + 0.04, 1.7, -0.2]} rotation-y={Math.PI / 2}>
+      <mesh castShadow>
+        <boxGeometry args={[3.1, 1.95, 0.05]} />
+        <meshStandardMaterial color={PALETTE.navy} roughness={0.5} />
+      </mesh>
+      <mesh position={[0, 0, 0.03]}>
+        <planeGeometry args={[2.95, 1.82]} />
+        <meshStandardMaterial map={tex} roughness={0.9} />
+      </mesh>
+    </group>
+  );
+}
+
+function ServerRack() {
+  const leds = useRef<THREE.MeshStandardMaterial[]>([]);
+  useFrame(({ clock }) => {
+    const t = clock.elapsedTime;
+    leds.current.forEach((m, i) => {
+      m.emissiveIntensity = Math.sin(t * (3 + (i % 5)) + i * 1.7) > 0.2 ? 3 : 0.3;
+    });
+  });
+  const units = Array.from({ length: 8 }, (_, i) => i);
+  return (
+    <group>
+      <mesh position={[0, 0.95, 0]} castShadow receiveShadow>
+        <boxGeometry args={[0.9, 1.9, 0.9]} />
+        <meshStandardMaterial color="#1b2433" roughness={0.4} metalness={0.6} />
+      </mesh>
+      {units.map((i) => (
+        <group key={i} position={[0, 0.22 + i * 0.21, 0.452]}>
+          <mesh>
+            <boxGeometry args={[0.78, 0.17, 0.01]} />
+            <meshStandardMaterial color="#2a3546" roughness={0.3} metalness={0.7} />
+          </mesh>
+          {[0, 1, 2].map((j) => (
+            <mesh key={j} position={[0.26 + j * 0.05, 0, 0.008]}>
+              <boxGeometry args={[0.025, 0.025, 0.01]} />
+              <meshStandardMaterial
+                ref={(m) => {
+                  if (m) leds.current[i * 3 + j] = m;
+                }}
+                color={j === 2 ? "#3fd27a" : "#4aa3ff"}
+                emissive={j === 2 ? "#3fd27a" : "#4aa3ff"}
+              />
+            </mesh>
+          ))}
+          <mesh position={[-0.15, 0, 0.007]}>
+            <boxGeometry args={[0.4, 0.06, 0.01]} />
+            <meshStandardMaterial color="#111823" />
           </mesh>
         </group>
-      ))}
-      {/* ceiling */}
-      <mesh position={[0, 3.5, 0]} rotation-x={Math.PI / 2}>
-        <planeGeometry args={[14, 10]} />
-        <meshStandardMaterial color="#f7f1e8" emissive="#f3e6d2" emissiveIntensity={0.45} side={THREE.DoubleSide} />
-      </mesh>
-      {/* skirting */}
-      <mesh position={[0, 0.06, -4.98]}>
-        <boxGeometry args={[14, 0.12, 0.04]} />
-        <meshStandardMaterial color={PALETTE.trim} />
-      </mesh>
-      {/* framed posters on back wall */}
-      {[-6, -2, 2, 6].map((x, i) => (
-        <mesh key={x} position={[x, 2.4, -4.98]}>
-          <planeGeometry args={[1, 1.3]} />
-          <meshStandardMaterial color={["#f2c57c", "#2f4858", "#efe6d8", "#86a873"][i] ?? "#efe6d8"} />
-        </mesh>
       ))}
     </group>
   );
 }
 
-function Furniture() {
+function Phone() {
+  return (
+    <group rotation-y={-0.35}>
+      <mesh position={[0, 0.006, 0]} castShadow>
+        <boxGeometry args={[0.09, 0.012, 0.18]} />
+        <meshStandardMaterial color="#111827" roughness={0.3} metalness={0.5} />
+      </mesh>
+      <mesh position={[0, 0.0125, 0]} rotation-x={-Math.PI / 2}>
+        <planeGeometry args={[0.08, 0.165]} />
+        <meshStandardMaterial color="#2f6fd6" emissive="#4a8cff" emissiveIntensity={0.9} />
+      </mesh>
+    </group>
+  );
+}
+
+function Greeter() {
+  const { scene, animations } = useGLTF("/models/greeter.glb");
+  const ref = useRef<THREE.Group>(null);
+  const { actions } = useAnimations(animations, ref);
+  const norm = useMemo(() => {
+    scene.traverse((o) => {
+      if ((o as THREE.Mesh).isMesh) o.castShadow = true;
+    });
+    const box = new THREE.Box3().setFromObject(scene);
+    return 1.55 / (box.max.y - box.min.y);
+  }, [scene]);
+  useEffect(() => {
+    const wave = actions["Wave"] ?? actions["Idle"];
+    wave?.reset().setLoop(THREE.LoopRepeat, Infinity).play();
+  }, [actions]);
+  return (
+    <group ref={ref} scale={norm} rotation-y={-0.5}>
+      <primitive object={scene} />
+    </group>
+  );
+}
+
+/** Wraps a clickable object; squashes/bounces it when its station is opened. */
+function Interactive({
+  id,
+  pulse,
+  position,
+  children,
+}: {
+  id: string;
+  pulse: React.MutableRefObject<Pulse>;
+  position: [number, number, number];
+  children: React.ReactNode;
+}) {
+  const g = useRef<THREE.Group>(null);
+  useFrame(({ clock }) => {
+    if (!g.current) return;
+    const p = pulse.current;
+    if (p && p.id === id) {
+      const a = clock.elapsedTime - p.t;
+      const s = 1 + 0.18 * Math.exp(-3.5 * a) * Math.sin(a * 20);
+      g.current.scale.set(1 + (s - 1) * 0.6, s, 1 + (s - 1) * 0.6);
+      g.current.position.y = position[1] + Math.max(0, Math.sin(Math.min(a * 6, Math.PI))) * 0.08;
+    } else {
+      g.current.scale.setScalar(1);
+      g.current.position.y = position[1];
+    }
+  });
+  return (
+    <group ref={g} position={position}>
+      {children}
+    </group>
+  );
+}
+
+/** Expanding blue ring on the floor under a clicked object. */
+function ClickRing({ pulse }: { pulse: React.MutableRefObject<Pulse> }) {
+  const m = useRef<THREE.Mesh>(null);
+  const mat = useRef<THREE.MeshBasicMaterial>(null);
+  useFrame(({ clock }) => {
+    const p = pulse.current;
+    if (!m.current || !mat.current) return;
+    const s = p && STATIONS.find((x) => x.id === p.id);
+    if (!p || !s) {
+      m.current.visible = false;
+      return;
+    }
+    const a = clock.elapsedTime - p.t;
+    m.current.visible = true;
+    m.current.position.set(s.object[0], 0.02, s.object[2]);
+    m.current.scale.setScalar(0.3 + a * 3);
+    mat.current.opacity = Math.max(0, 0.8 - a * 1.4);
+  });
+  return (
+    <mesh ref={m} rotation-x={-Math.PI / 2} visible={false}>
+      <ringGeometry args={[0.45, 0.55, 48]} />
+      <meshBasicMaterial ref={mat} color="#2f6fd6" transparent depthWrite={false} />
+    </mesh>
+  );
+}
+
+function Furniture({ pulse }: { pulse: React.MutableRefObject<Pulse> }) {
+  const [sw, apps, tech, , about, contact] = STATIONS.map((s) => s.object);
   return (
     <group>
-      {[-4, 0, 4].map((x, i) => (
-        <group key={x}>
-          <Model name="desk" position={[x, 0, -3.85]} rotation={Math.PI} />
-          <Model name="computerScreen" position={[x, 0.91, -4.2]} rotation={Math.PI} />
-          <Model name="computerKeyboard" position={[x, 0.91, -3.55]} rotation={Math.PI} />
-          <Model name="chairDesk" position={[x + 0.1, 0, -2.75]} rotation={(1 - i) * 0.3} />
-          {i !== 1 && <Model name="plantSmall1" position={[x + 0.65, 0.91, -4.15]} />}
-        </group>
-      ))}
-      <Model name="bookcaseOpen" position={[-6.5, 0, -0.05]} rotation={Math.PI / 2} />
-      <Model name="bookcaseOpen" position={[-6.5, 0, 1.05]} rotation={Math.PI / 2} />
-      <Model name="books" position={[-6.5, 0.98, 1.05]} rotation={Math.PI / 2} />
-      <Model name="books" position={[-6.5, 0.98, -0.05]} rotation={Math.PI / 2} />
-      <Model name="cabinetTelevision" position={[6.45, 0, 0.5]} rotation={-Math.PI / 2} />
-      <Model name="televisionModern" position={[6.45, 0.75, 0.5]} rotation={-Math.PI / 2} />
-      <Model name="speaker" position={[6.5, 0, -0.9]} rotation={-Math.PI / 2} />
-      <Model name="speaker" position={[6.5, 0, 1.9]} rotation={-Math.PI / 2} />
-      <Model name="loungeSofa" position={[3.6, 0, 0.5]} rotation={Math.PI / 2} />
-      <Model name="tableCoffee" position={[5, 0, 0.5]} rotation={Math.PI / 2} />
-      <Model name="rugRectangle" position={[4.7, 0.005, 0.5]} rotation={Math.PI / 2} />
-      <Model name="cabinetTelevision" position={[-5.6, 0, 4.55]} rotation={Math.PI} />
-      <Model name="kitchenCoffeeMachine" position={[-5.8, 0.75, 4.6]} rotation={Math.PI} />
-      <Model name="radio" position={[-5.1, 0.75, 4.6]} rotation={Math.PI} />
-      <Model name="pottedPlant" position={[-6.5, 0, 4.4]} />
-      <Model name="pottedPlant" position={[6.4, 0, -4.4]} />
-      <Model name="pottedPlant" position={[-6.4, 0, -4.4]} />
-      <Model name="lampSquareFloor" position={[6.5, 0, 3.0]} />
+      <Model name="desk" position={[1, 0, -3.0]} rotation={Math.PI} />
+      <Model name="chairDesk" position={[1.1, 0, -1.9]} rotation={0.2} />
+      <Interactive id="software" pulse={pulse} position={[sw![0], 0.91, sw![2]]}>
+        <Model name="laptop" rotation={Math.PI + 0.15} />
+      </Interactive>
+      <Interactive id="apps" pulse={pulse} position={[apps![0], 0.91, apps![2]]}>
+        <Phone />
+      </Interactive>
+      <Model name="plantSmall1" position={[1.9, 0.91, -3.25]} />
+      <Interactive id="technical" pulse={pulse} position={tech!}>
+        <ServerRack />
+      </Interactive>
+      <Interactive id="experience" pulse={pulse} position={[0, 0, 0]}>
+        <Pinboard />
+      </Interactive>
+      <Interactive id="about" pulse={pulse} position={about!}>
+        <Greeter />
+      </Interactive>
+      <Model name="cabinetTelevision" position={[-3.6, 0, 3.1]} rotation={Math.PI} />
+      <Interactive id="contact" pulse={pulse} position={contact!}>
+        <Model name="kitchenCoffeeMachine" position={[-0.2, 0, 0.05]} rotation={Math.PI} />
+      </Interactive>
+      <Model name="pottedPlant" position={[-4.1, 0, -3.1]} />
+      <Model name="pottedPlant" position={[4.1, 0, 3.1]} />
+      <Model name="lampSquareFloor" position={[-1.6, 0, -3.1]} />
     </group>
   );
 }
@@ -157,7 +373,7 @@ function StationMarker({
   return (
     <group position={station.position}>
       <mesh
-        position={[0, -0.6, 0.4]}
+        position={[0, -0.5, 0]}
         onClick={(e) => {
           e.stopPropagation();
           if (isDrag()) return;
@@ -166,7 +382,7 @@ function StationMarker({
         onPointerOver={() => (document.body.style.cursor = "pointer")}
         onPointerOut={() => (document.body.style.cursor = "")}
       >
-        <boxGeometry args={[1.8, 1.4, 1.4]} />
+        <boxGeometry args={[1, 1.2, 1]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
     </group>
@@ -177,10 +393,12 @@ function Walker({
   input,
   player,
   onNearest,
+  target,
 }: {
   input: React.MutableRefObject<Input>;
   player: React.MutableRefObject<Player>;
   onNearest: (id: string | null) => void;
+  target: React.MutableRefObject<Station | null>;
 }) {
   const { camera } = useThree();
   const last = useRef<string | null>(null);
@@ -194,7 +412,17 @@ function Walker({
     const strafe =
       (k.has("KeyD") || k.has("ArrowRight") ? 1 : 0) - (k.has("KeyA") || k.has("ArrowLeft") ? 1 : 0) + input.current.touch.strafe;
     const p = player.current;
-    step(p, fwd, strafe, delta, OBSTACLES);
+    const tg = target.current;
+    if (tg) {
+      // click animation: swing the view toward the clicked object
+      const dx = tg.object[0] - p.x;
+      const dz = tg.object[2] - p.z;
+      let want = Math.atan2(-dx, -dz) - p.yaw;
+      want = Math.atan2(Math.sin(want), Math.cos(want));
+      const k = 1 - Math.exp(-6 * Math.min(delta, 0.05));
+      p.yaw += want * k;
+      p.pitch += (-0.25 - p.pitch) * k;
+    } else step(p, fwd, strafe, delta, OBSTACLES);
     camera.position.set(p.x, EYE_HEIGHT, p.z);
     camera.rotation.set(p.pitch, p.yaw, 0);
 
@@ -259,7 +487,7 @@ const MOVE_PADS: { label: string; fwd: number; strafe: number; area: string }[] 
 export default function OfficeScene() {
   const navigate = useNavigate();
   const input = useRef<Input>({ keys: new Set(), touch: { fwd: 0, strafe: 0 } });
-  const player = useRef<Player>({ x: 0, z: 3.6, yaw: 0, pitch: -0.08 });
+  const player = useRef<Player>({ x: -0.4, z: 2.6, yaw: 0.15, pitch: -0.12 });
   const [nearest, setNearest] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
   const [leaving, setLeaving] = useState(false);
@@ -269,12 +497,17 @@ export default function OfficeScene() {
   const lastMoved = useRef(0);
   const labels = useRef<Record<string, HTMLButtonElement | null>>({});
 
+  const pulse = useRef<Pulse>(null);
+  const target = useRef<Station | null>(null);
+  const clockRef = useRef<THREE.Clock | null>(null);
   const open = (s: Station) => {
     if (leaving) return;
-    setLeaving(true);
+    pulse.current = { id: s.id, t: clockRef.current?.elapsedTime ?? 0 };
+    target.current = s;
+    window.setTimeout(() => setLeaving(true), 550);
     window.setTimeout(() => {
       navigate({ to: s.to, params: s.params } as never);
-    }, 450);
+    }, 1050);
   };
   const openRef = useRef(open);
   openRef.current = open;
@@ -306,7 +539,8 @@ export default function OfficeScene() {
       <Canvas
         shadows
         dpr={[1, 1.75]}
-        camera={{ fov: 68, near: 0.05, far: 60, position: [0, EYE_HEIGHT, 3.6] }}
+        camera={{ fov: 68, near: 0.05, far: 60, position: [-0.4, EYE_HEIGHT, 2.6] }}
+        onCreated={({ clock }) => (clockRef.current = clock)}
         gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.05 }}
         onPointerDown={(e) => {
           drag.current = { x: e.clientX, y: e.clientY, moved: 0 };
@@ -329,28 +563,27 @@ export default function OfficeScene() {
         }}
         onPointerLeave={() => (drag.current = null)}
       >
-        <color attach="background" args={["#e9dcc8"]} />
-        <fog attach="fog" args={["#e9dcc8", 14, 30]} />
-        <hemisphereLight args={["#fff4e2", "#8a6a50", 0.55]} />
+        <color attach="background" args={["#eef3fa"]} />
+        <fog attach="fog" args={["#eef3fa", 12, 24]} />
+        <hemisphereLight args={["#ffffff", "#9fb3cc", 0.7]} />
         <directionalLight
-          position={[9, 7, -2]}
-          intensity={2.2}
-          color="#ffd9a8"
+          position={[7, 6, 1]}
+          intensity={2}
+          color="#fff6ea"
           castShadow
           shadow-mapSize={[1024, 1024]}
-          shadow-camera-left={-9}
-          shadow-camera-right={9}
-          shadow-camera-top={7}
-          shadow-camera-bottom={-7}
+          shadow-camera-left={-6}
+          shadow-camera-right={6}
+          shadow-camera-top={5}
+          shadow-camera-bottom={-5}
           shadow-bias={-0.0005}
         />
-        <pointLight position={[-4, 3, -2.5]} intensity={6} distance={7} color="#ffcf9a" />
-        <pointLight position={[4, 3, -2.5]} intensity={6} distance={7} color="#ffcf9a" />
-        <pointLight position={[-5, 2.8, 3]} intensity={5} distance={6} color="#ffd8b0" />
+        <pointLight position={[0, 2.8, -1.5]} intensity={5} distance={7} color="#ffffff" />
+        <pointLight position={[0, 2.8, 1.5]} intensity={5} distance={7} color="#eaf2ff" />
         <Environment resolution={128}>
           <Lightformer intensity={1.6} position={[0, 5, 0]} scale={[10, 10, 1]} rotation-x={Math.PI / 2} />
-          <Lightformer intensity={1.2} color="#ffd2a0" position={[8, 2, 0]} rotation-y={-Math.PI / 2} scale={[10, 3, 1]} />
-          <Lightformer intensity={0.6} color="#c8643f" position={[0, 2, -8]} scale={[12, 3, 1]} />
+          <Lightformer intensity={1.2} color="#dbe9ff" position={[8, 2, 0]} rotation-y={-Math.PI / 2} scale={[10, 3, 1]} />
+          <Lightformer intensity={0.6} color="#2f6fd6" position={[0, 2, -8]} scale={[12, 3, 1]} />
         </Environment>
 
         <Room />
@@ -358,10 +591,11 @@ export default function OfficeScene() {
           <StationMarker key={s.id} station={s} active={nearest === s.id} onOpen={open} isDrag={() => lastMoved.current > 6} />
         ))}
         <LabelProjector labels={labels} />
-        <Walker input={input} player={player} onNearest={setNearest} />
+        <Walker input={input} player={player} onNearest={setNearest} target={target} />
+        <ClickRing pulse={pulse} />
         <Suspense fallback={null}>
-          <Furniture />
-          <ContactShadows position={[0, 0.01, 0]} scale={16} opacity={0.35} blur={2.4} far={2} />
+          <Furniture pulse={pulse} />
+          <ContactShadows position={[0, 0.01, 0]} scale={11} opacity={0.3} blur={2.4} far={2} />
           <ReadyFlag onReady={() => setReady(true)} />
         </Suspense>
       </Canvas>
@@ -377,7 +611,7 @@ export default function OfficeScene() {
             onClick={() => open(s)}
             className="station-anchor"
           >
-            <span className={`station-tag ${nearest === s.id ? "is-active" : ""}`}>
+            <span className={`station-tag ${nearest === s.id ? "is-active" : ""} ${target.current?.id === s.id ? "is-clicked" : ""}`}>
               <span className="station-tag__hint">{s.hint}</span>
               <span className="station-tag__label">{s.label}</span>
               {nearest === s.id && <span className="station-tag__key">Press E</span>}

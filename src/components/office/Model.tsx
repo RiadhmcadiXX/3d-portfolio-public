@@ -35,7 +35,6 @@ export function Model({ name, position = [0, 0, 0], rotation = 0, scale = FURNIT
 }
 
 [
-  "desk", "chairDesk", "computerScreen", "computerKeyboard", "laptop", "bookcaseOpen", "books",
-  "pottedPlant", "plantSmall1", "loungeSofa", "tableCoffee", "rugRectangle", "lampSquareFloor",
-  "kitchenCoffeeMachine", "televisionModern", "cabinetTelevision", "speaker", "radio",
+  "desk", "chairDesk", "laptop", "pottedPlant", "plantSmall1", "lampSquareFloor",
+  "kitchenCoffeeMachine", "cabinetTelevision", "greeter",
 ].forEach((n) => useGLTF.preload(`/models/${n}.glb`));
