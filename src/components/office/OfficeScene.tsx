@@ -147,10 +147,12 @@ function StationMarker({
   station,
   active,
   onOpen,
+  isDrag,
 }: {
   station: Station;
   active: boolean;
   onOpen: (s: Station) => void;
+  isDrag: () => boolean;
 }) {
   return (
     <group position={station.position}>
@@ -158,7 +160,7 @@ function StationMarker({
         position={[0, -0.6, 0.4]}
         onClick={(e) => {
           e.stopPropagation();
-          if ((e.nativeEvent as PointerEvent & { __dragged?: boolean }).__dragged) return;
+          if (isDrag()) return;
           onOpen(station);
         }}
         onPointerOver={() => (document.body.style.cursor = "pointer")}
@@ -252,6 +254,7 @@ export default function OfficeScene() {
   const nearestRef = useRef<string | null>(null);
   nearestRef.current = nearest;
   const drag = useRef<{ x: number; y: number; moved: number } | null>(null);
+  const lastMoved = useRef(0);
 
   const open = (s: Station) => {
     if (leaving) return;
@@ -307,16 +310,11 @@ export default function OfficeScene() {
           p.yaw -= dx * 0.0045;
           p.pitch = Math.max(-1.1, Math.min(1.1, p.pitch - dy * 0.0035));
         }}
-        onPointerUp={(e) => {
-          if (drag.current && drag.current.moved > 6) (e.nativeEvent as PointerEvent & { __dragged?: boolean }).__dragged = true;
+        onPointerUp={() => {
+          lastMoved.current = drag.current?.moved ?? 0;
           drag.current = null;
         }}
         onPointerLeave={() => (drag.current = null)}
-        onClickCapture={(e) => {
-          // Mark drags so station clicks ignore them
-          if (drag.current === null) return;
-          void e;
-        }}
       >
         <color attach="background" args={["#e9dcc8"]} />
         <fog attach="fog" args={["#e9dcc8", 14, 30]} />
@@ -348,7 +346,7 @@ export default function OfficeScene() {
           <Furniture />
           <ContactShadows position={[0, 0.01, 0]} scale={16} opacity={0.35} blur={2.4} far={2} />
           {STATIONS.map((s) => (
-            <StationMarker key={s.id} station={s} active={nearest === s.id} onOpen={open} />
+            <StationMarker key={s.id} station={s} active={nearest === s.id} onOpen={open} isDrag={() => lastMoved.current > 6} />
           ))}
           <ReadyFlag onReady={() => setReady(true)} />
         </Suspense>
