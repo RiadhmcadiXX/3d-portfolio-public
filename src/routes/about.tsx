@@ -25,7 +25,7 @@ function AboutPage() {
         build in React and Three.js, and care about every frame.
       </motion.p>
       <motion.p className="page-body" variants={rise} initial="hidden" animate="show" custom={6}>
-        This studio is my portfolio: every piece of furniture leads somewhere. Head back and try the bookshelf.
+        This studio is my portfolio: every piece of furniture leads somewhere. Head back and try the pinboard.
       </motion.p>
     </PageShell>
   );

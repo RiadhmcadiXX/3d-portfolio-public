@@ -19,7 +19,7 @@ export const Route = createFileRoute("/experience")({
 
 function ExperiencePage() {
   return (
-    <PageShell eyebrow="From the bookshelf" title="Experience">
+    <PageShell eyebrow="From the pinboard" title="Experience">
       <ol className="timeline">
         {experience.map((e, i) => (
           <motion.li
