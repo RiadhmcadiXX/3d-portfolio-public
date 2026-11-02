@@ -1,5 +1,5 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { ContactShadows, Environment, Html, Lightformer } from "@react-three/drei";
+import { ContactShadows, Environment, Lightformer } from "@react-three/drei";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import * as THREE from "three";
@@ -169,17 +169,6 @@ function StationMarker({
         <boxGeometry args={[1.8, 1.4, 1.4]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
-      <Html center distanceFactor={7} zIndexRange={[10, 0]}>
-        <button
-          type="button"
-          onClick={() => onOpen(station)}
-          className={`station-tag ${active ? "is-active" : ""}`}
-        >
-          <span className="station-tag__hint">{station.hint}</span>
-          <span className="station-tag__label">{station.label}</span>
-          {active && <span className="station-tag__key">Press E</span>}
-        </button>
-      </Html>
     </group>
   );
 }
@@ -226,6 +215,29 @@ function Walker({
   return null;
 }
 
+const TMP = new THREE.Vector3();
+/** Projects each station anchor to screen space and moves its DOM label directly (no React re-render). */
+function LabelProjector({ labels }: { labels: React.MutableRefObject<Record<string, HTMLButtonElement | null>> }) {
+  const { camera, size } = useThree();
+  useFrame(() => {
+    for (const s of STATIONS) {
+      const el = labels.current[s.id];
+      if (!el) continue;
+      TMP.set(...s.position).project(camera);
+      const dist = camera.position.distanceTo(TMP.set(...s.position));
+      TMP.set(...s.position).project(camera);
+      const visible = TMP.z < 1 && Math.abs(TMP.x) < 1.2 && Math.abs(TMP.y) < 1.2;
+      const x = (TMP.x * 0.5 + 0.5) * size.width;
+      const y = (-TMP.y * 0.5 + 0.5) * size.height;
+      const scale = Math.max(0.55, Math.min(1.25, 5 / dist));
+      el.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px) scale(${scale})`;
+      el.style.opacity = visible ? "1" : "0";
+      el.style.pointerEvents = visible ? "auto" : "none";
+    }
+  });
+  return null;
+}
+
 function ReadyFlag({ onReady }: { onReady: () => void }) {
   const done = useRef(false);
   useFrame(() => {
@@ -255,6 +267,7 @@ export default function OfficeScene() {
   nearestRef.current = nearest;
   const drag = useRef<{ x: number; y: number; moved: number } | null>(null);
   const lastMoved = useRef(0);
+  const labels = useRef<Record<string, HTMLButtonElement | null>>({});
 
   const open = (s: Station) => {
     if (leaving) return;
@@ -344,6 +357,7 @@ export default function OfficeScene() {
         {STATIONS.map((s) => (
           <StationMarker key={s.id} station={s} active={nearest === s.id} onOpen={open} isDrag={() => lastMoved.current > 6} />
         ))}
+        <LabelProjector labels={labels} />
         <Walker input={input} player={player} onNearest={setNearest} />
         <Suspense fallback={null}>
           <Furniture />
@@ -351,6 +365,26 @@ export default function OfficeScene() {
           <ReadyFlag onReady={() => setReady(true)} />
         </Suspense>
       </Canvas>
+
+      <div className="office-labels">
+        {STATIONS.map((s) => (
+          <button
+            key={s.id}
+            ref={(el) => {
+              labels.current[s.id] = el;
+            }}
+            type="button"
+            onClick={() => open(s)}
+            className="station-anchor"
+          >
+            <span className={`station-tag ${nearest === s.id ? "is-active" : ""}`}>
+              <span className="station-tag__hint">{s.hint}</span>
+              <span className="station-tag__label">{s.label}</span>
+              {nearest === s.id && <span className="station-tag__key">Press E</span>}
+            </span>
+          </button>
+        ))}
+      </div>
 
       <header className="office-hud-top">
         <div>
