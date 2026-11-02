@@ -153,10 +153,10 @@ function Room() {
         </mesh>
       ))}
       {/* skirting */}
-      {[
+      {([
         [0, -D / 2 + 0.02, W, 0],
         [-W / 2 + 0.02, 0, D, Math.PI / 2],
-      ].map(([x, z, len, r], i) => (
+      ] as [number, number, number, number][]).map(([x, z, len, r], i) => (
         <mesh key={i} position={[x, 0.05, z]} rotation-y={r}>
           <boxGeometry args={[len, 0.1, 0.03]} />
           <meshStandardMaterial color={PALETTE.navy} />
@@ -487,7 +487,7 @@ const MOVE_PADS: { label: string; fwd: number; strafe: number; area: string }[] 
 export default function OfficeScene() {
   const navigate = useNavigate();
   const input = useRef<Input>({ keys: new Set(), touch: { fwd: 0, strafe: 0 } });
-  const player = useRef<Player>({ x: -0.4, z: 2.6, yaw: 0.15, pitch: -0.12 });
+  const player = useRef<Player>({ x: 0.2, z: 3.0, yaw: 0.1, pitch: -0.12 });
   const [nearest, setNearest] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
   const [leaving, setLeaving] = useState(false);
@@ -539,7 +539,7 @@ export default function OfficeScene() {
       <Canvas
         shadows
         dpr={[1, 1.75]}
-        camera={{ fov: 68, near: 0.05, far: 60, position: [-0.4, EYE_HEIGHT, 2.6] }}
+        camera={{ fov: 68, near: 0.05, far: 60, position: [0.2, EYE_HEIGHT, 3.0] }}
         onCreated={({ clock }) => (clockRef.current = clock)}
         gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.05 }}
         onPointerDown={(e) => {
