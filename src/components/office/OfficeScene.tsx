@@ -253,8 +253,8 @@ function Greeter() {
     scene.traverse((o) => {
       if ((o as THREE.Mesh).isMesh) o.castShadow = true;
     });
-    const box = new THREE.Box3().setFromObject(scene);
-    return 1.55 / (box.max.y - box.min.y);
+    // RobotExpressive is ~4.4 units tall; skinned bounds are unreliable, so use a fixed factor
+    return 0.36;
   }, [scene]);
   useEffect(() => {
     const wave = actions["Wave"] ?? actions["Idle"];
