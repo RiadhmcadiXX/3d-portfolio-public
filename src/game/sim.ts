@@ -2,8 +2,8 @@
 export const WALK_SPEED = 3.2; // m/s
 export const PLAYER_RADIUS = 0.35;
 export const EYE_HEIGHT = 1.6;
-export const ROOM = { minX: -7, maxX: 7, minZ: -5, maxZ: 5 };
-export const INTERACT_DISTANCE = 2.4;
+export const ROOM = { minX: -4.5, maxX: 4.5, minZ: -3.5, maxZ: 3.5 };
+export const INTERACT_DISTANCE = 2;
 
 export type Box = { minX: number; maxX: number; minZ: number; maxZ: number };
 export type Player = { x: number; z: number; yaw: number; pitch: number };
