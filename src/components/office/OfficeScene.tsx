@@ -229,7 +229,7 @@ function LabelProjector({ labels }: { labels: React.MutableRefObject<Record<stri
       const visible = TMP.z < 1 && Math.abs(TMP.x) < 1.2 && Math.abs(TMP.y) < 1.2;
       const x = (TMP.x * 0.5 + 0.5) * size.width;
       const y = (-TMP.y * 0.5 + 0.5) * size.height;
-      const scale = Math.max(0.55, Math.min(1.25, 5 / dist));
+      const scale = Math.max(0.85, Math.min(1.3, 6 / dist));
       el.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px) scale(${scale})`;
       el.style.opacity = visible ? "1" : "0";
       el.style.pointerEvents = visible ? "auto" : "none";
