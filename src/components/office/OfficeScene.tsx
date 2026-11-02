@@ -44,7 +44,7 @@ function plankTexture() {
   }
   const t = new THREE.CanvasTexture(c);
   t.wrapS = t.wrapT = THREE.RepeatWrapping;
-  t.repeat.set(4, 3);
+  t.repeat.set(9, 6);
   t.colorSpace = THREE.SRGBColorSpace;
   t.anisotropy = 8;
   return t;
@@ -91,7 +91,7 @@ function Room() {
       {/* ceiling */}
       <mesh position={[0, 3.5, 0]} rotation-x={Math.PI / 2}>
         <planeGeometry args={[14, 10]} />
-        <meshStandardMaterial color="#f7f1e8" side={THREE.DoubleSide} />
+        <meshStandardMaterial color="#f7f1e8" emissive="#f3e6d2" emissiveIntensity={0.45} side={THREE.DoubleSide} />
       </mesh>
       {/* skirting */}
       <mesh position={[0, 0.06, -4.98]}>
@@ -115,9 +115,9 @@ function Furniture() {
       {[-4, 0, 4].map((x, i) => (
         <group key={x}>
           <Model name="desk" position={[x, 0, -3.85]} rotation={Math.PI} />
-          <Model name="computerScreen" position={[x, 0.91, -4.2]} rotation={0} />
-          <Model name="computerKeyboard" position={[x, 0.91, -3.55]} rotation={0} />
-          <Model name="chairDesk" position={[x + 0.1, 0, -2.75]} rotation={Math.PI + (i - 1) * 0.3} />
+          <Model name="computerScreen" position={[x, 0.91, -4.2]} rotation={Math.PI} />
+          <Model name="computerKeyboard" position={[x, 0.91, -3.55]} rotation={Math.PI} />
+          <Model name="chairDesk" position={[x + 0.1, 0, -2.75]} rotation={(1 - i) * 0.3} />
           {i !== 1 && <Model name="plantSmall1" position={[x + 0.65, 0.91, -4.15]} />}
         </group>
       ))}
