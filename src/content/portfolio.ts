@@ -1,5 +1,13 @@
 // Placeholder portfolio content — replace with the owner's real details.
+export type Category = "software" | "apps" | "technical";
+export const categories: Record<Category, { title: string; blurb: string }> = {
+  software: { title: "Software & Web", blurb: "Web applications and desktop software." },
+  apps: { title: "Mobile Apps", blurb: "Apps for iOS and Android." },
+  technical: { title: "Technical Projects", blurb: "Infrastructure, servers and systems work." },
+};
+
 export type Project = {
+  category: Category;
   slug: string;
   title: string;
   year: string;
@@ -20,6 +28,7 @@ export const owner = {
 export const projects: Project[] = [
   {
     slug: "atlas",
+    category: "software",
     title: "Atlas",
     year: "2026",
     role: "Lead front-end",
@@ -37,6 +46,7 @@ export const projects: Project[] = [
   },
   {
     slug: "lumen",
+    category: "software",
     title: "Lumen",
     year: "2025",
     role: "Design & 3D",
@@ -54,6 +64,7 @@ export const projects: Project[] = [
   },
   {
     slug: "fieldnotes",
+    category: "apps",
     title: "Fieldnotes",
     year: "2024",
     role: "Full-stack",
@@ -67,6 +78,21 @@ export const projects: Project[] = [
       { label: "Writers", value: "12k" },
       { label: "Notes synced", value: "1.8M" },
       { label: "Uptime", value: "99.98%" },
+    ],
+  },
+  {
+    slug: "relay",
+    category: "technical",
+    title: "Relay",
+    year: "2023",
+    role: "Infrastructure",
+    summary: "A self-hosted build and deploy cluster for a small studio.",
+    body: ["Relay replaced a pile of scripts with a reliable, monitored deploy pipeline running on in-house servers."],
+    tags: ["Linux", "Docker", "CI/CD"],
+    stats: [
+      { label: "Deploys / week", value: "300+" },
+      { label: "Build time", value: "-61%" },
+      { label: "Servers", value: "6" },
     ],
   },
 ];
