@@ -30,7 +30,7 @@ export const Route = createFileRoute("/projects/$slug")({
 function ProjectPage() {
   const { project } = Route.useLoaderData();
   const idx = projects.findIndex((p) => p.slug === project.slug);
-  const next = projects[(idx + 1) % projects.length];
+  const next = projects[(idx + 1) % projects.length] ?? projects[0]!;
   return (
     <PageShell eyebrow={`Project · ${project.year} · ${project.role}`} title={project.title}>
       <motion.p className="page-lede" variants={rise} initial="hidden" animate="show" custom={3}>

@@ -102,7 +102,7 @@ function Room() {
       {[-6, -2, 2, 6].map((x, i) => (
         <mesh key={x} position={[x, 2.4, -4.98]}>
           <planeGeometry args={[1, 1.3]} />
-          <meshStandardMaterial color={["#f2c57c", "#2f4858", "#efe6d8", "#86a873"][i]} />
+          <meshStandardMaterial color={["#f2c57c", "#2f4858", "#efe6d8", "#86a873"][i] ?? "#efe6d8"} />
         </mesh>
       ))}
     </group>
@@ -341,13 +341,13 @@ export default function OfficeScene() {
         </Environment>
 
         <Room />
+        {STATIONS.map((s) => (
+          <StationMarker key={s.id} station={s} active={nearest === s.id} onOpen={open} isDrag={() => lastMoved.current > 6} />
+        ))}
         <Walker input={input} player={player} onNearest={setNearest} />
         <Suspense fallback={null}>
           <Furniture />
           <ContactShadows position={[0, 0.01, 0]} scale={16} opacity={0.35} blur={2.4} far={2} />
-          {STATIONS.map((s) => (
-            <StationMarker key={s.id} station={s} active={nearest === s.id} onOpen={open} isDrag={() => lastMoved.current > 6} />
-          ))}
           <ReadyFlag onReady={() => setReady(true)} />
         </Suspense>
       </Canvas>
