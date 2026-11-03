@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>person diagnostic</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.187.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.187.0/examples/jsm/"
+        }
+      }
+    </script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        background: #eef3fa;
+      }
+      canvas {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <script type="module">
+      import * as THREE from "three";
+      import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
+      const q = new URLSearchParams(location.search);
+      const clip = q.get("clip") || "idle";
+      const scale = parseFloat(q.get("scale") || "2.089");
+      const rot = parseFloat(q.get("rot") || "0");
+      const t = parseFloat(q.get("t") || "0");
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(600, 600);
+      document.body.appendChild(renderer.domElement);
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color("#eef3fa");
+      const cam = new THREE.PerspectiveCamera(35, 1, 0.05, 50);
+      cam.position.set(0, 1.1, 3.4);
+      cam.lookAt(0, 0.8, 0);
+      scene.add(new THREE.HemisphereLight(0xffffff, 0x99aabb, 1.4));
+      const dl = new THREE.DirectionalLight(0xffffff, 2);
+      dl.position.set(3, 4, 2);
+      scene.add(dl);
+
+      const gltf = await new GLTFLoader().loadAsync("/__l5e/assets-v1/45c09299-7748-4223-b7e7-23d3395d33f6/person.glb");
+      const root = new THREE.Group();
+      root.scale.setScalar(scale);
+      root.rotation.y = rot;
+      scene.add(root);
+      root.add(gltf.scene);
+
+      if (clip !== "none") {
+        const mixer = new THREE.AnimationMixer(gltf.scene);
+        const c = gltf.animations.find((a) => a.name === clip);
+        const action = mixer.clipAction(c);
+        action.play();
+        mixer.setTime(t);
+      }
+
+      renderer.render(scene, cam);
+      window.__done = true;
+    </script>
+  </body>
+</html>
