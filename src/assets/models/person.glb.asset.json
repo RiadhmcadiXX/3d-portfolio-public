@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "asset_id": "45c09299-7748-4223-b7e7-23d3395d33f6",
+  "asset_id": "3b319850-fcba-4635-b306-4ffb1fbfd1f7",
   "project_id": "41b028b0-4f9f-4dde-8364-2a9386a30d4b",
-  "url": "/__l5e/assets-v1/45c09299-7748-4223-b7e7-23d3395d33f6/person.glb",
-  "r2_key": "a/v1/41b028b0-4f9f-4dde-8364-2a9386a30d4b/45c09299-7748-4223-b7e7-23d3395d33f6/person.glb",
+  "url": "/__l5e/assets-v1/3b319850-fcba-4635-b306-4ffb1fbfd1f7/person.glb",
+  "r2_key": "a/v1/41b028b0-4f9f-4dde-8364-2a9386a30d4b/3b319850-fcba-4635-b306-4ffb1fbfd1f7/person.glb",
   "original_filename": "person.glb",
-  "size": 243476,
+  "size": 228992,
   "content_type": "model/gltf-binary",
-  "created_at": "2026-11-03T15:32:10Z"
+  "created_at": "2026-11-03T15:38:02Z"
 }
