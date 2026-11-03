@@ -52,7 +52,7 @@
       const load = new GLTFLoader();
       const mixers = [];
       chars.forEach(async (name, i) => {
-        const gltf = await load.loadAsync(`/models/_ptest/${name}.glb`);
+        const gltf = await load.loadAsync(`/_ptest/${name}.glb`);
         const box = new THREE.Box3().setFromObject(gltf.scene);
         const h = box.max.y - box.min.y || 1;
         const g = new THREE.Group();
