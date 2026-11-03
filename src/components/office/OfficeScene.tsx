@@ -3,6 +3,7 @@ import { ContactShadows, Environment, Lightformer, useAnimations, useGLTF } from
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import * as THREE from "three";
+import personModel from "@/assets/models/person.glb.asset.json";
 import { Model } from "./Model";
 import { STATIONS, OBSTACLES, type Station } from "@/game/stations";
 import { experience } from "@/content/portfolio";
@@ -245,23 +246,45 @@ function Phone() {
   );
 }
 
-function Greeter() {
-  const { scene, animations } = useGLTF("/models/greeter.glb");
+/**
+ * The animated person by the desk. Kenney Mini Characters ship rigged with
+ * built-in clips, so "idle" loops forever and "emote-yes" nods on click.
+ */
+const PERSON_HEIGHT = 1.62;
+/** The file's standing bbox is 0.7755 units tall with feet at y=0 (read from its accessors). */
+const PERSON_SCALE = PERSON_HEIGHT / 0.7755;
+
+function Person({ pulse }: { pulse: React.MutableRefObject<Pulse> }) {
+  const { scene, animations } = useGLTF(personModel.url);
   const ref = useRef<THREE.Group>(null);
   const { actions } = useAnimations(animations, ref);
-  const norm = useMemo(() => {
-    scene.traverse((o) => {
-      if ((o as THREE.Mesh).isMesh) o.castShadow = true;
-    });
-    // Suited man model is ~1.87 units tall with feet at y=0; scale to ~1.6m
-    return 0.85;
-  }, [scene]);
+  const nod = useRef<{ start: number; dur: number } | null>(null);
+
   useEffect(() => {
-    const wave = actions["Wave"] ?? actions["Idle"];
-    wave?.reset().setLoop(THREE.LoopRepeat, Infinity).play();
-  }, [actions]);
+    scene.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (m.isMesh) m.castShadow = true;
+    });
+    actions["idle"]?.reset().setLoop(THREE.LoopRepeat, Infinity).play();
+  }, [scene, actions]);
+
+  useFrame(({ clock }) => {
+    const t = clock.elapsedTime;
+    const p = pulse.current;
+    if (p && p.id === "about" && !nod.current) {
+      const clip = animations.find((a) => a.name === "emote-yes");
+      actions["emote-yes"]?.reset().setLoop(THREE.LoopOnce, 1).fadeIn(0.15).play();
+      actions["idle"]?.fadeOut(0.25);
+      nod.current = { start: t, dur: clip?.duration ?? 1 };
+    } else if (nod.current && t - nod.current.start > nod.current.dur + 0.15) {
+      actions["emote-yes"]?.fadeOut(0.3);
+      actions["idle"]?.reset().fadeIn(0.3).play();
+      nod.current = null;
+    }
+  });
+
   return (
-    <group ref={ref} scale={norm} rotation-y={-0.5}>
+    <group ref={ref} scale={PERSON_SCALE} rotation-y={0.25}>
       <primitive object={scene} />
     </group>
   );
@@ -346,7 +369,7 @@ function Furniture({ pulse }: { pulse: React.MutableRefObject<Pulse> }) {
         <Pinboard />
       </Interactive>
       <Interactive id="about" pulse={pulse} position={about!}>
-        <Greeter />
+        <Person pulse={pulse} />
       </Interactive>
       <Model name="cabinetTelevision" position={[-3.6, 0, 3.1]} rotation={Math.PI} />
       <Interactive id="contact" pulse={pulse} position={contact!}>
