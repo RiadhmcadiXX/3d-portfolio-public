@@ -3,7 +3,6 @@ import { ContactShadows, Environment, Lightformer, useAnimations, useGLTF } from
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import * as THREE from "three";
-import personModel from "@/assets/models/person.glb.asset.json";
 import { Model } from "./Model";
 import { STATIONS, OBSTACLES, type Station } from "@/game/stations";
 import { experience } from "@/content/portfolio";
@@ -255,7 +254,7 @@ const PERSON_HEIGHT = 1.62;
 const PERSON_SCALE = PERSON_HEIGHT / 0.7755;
 
 function Person({ pulse }: { pulse: React.MutableRefObject<Pulse> }) {
-  const { scene, animations } = useGLTF(personModel.url);
+  const { scene, animations } = useGLTF("/models/person.glb");
   const ref = useRef<THREE.Group>(null);
   const { actions } = useAnimations(animations, ref);
   const nod = useRef<{ start: number; dur: number } | null>(null);
