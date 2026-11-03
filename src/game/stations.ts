@@ -16,7 +16,7 @@ export const STATIONS: Station[] = [
   { id: "apps", label: "Mobile Apps", hint: "The phone", to: "/work/$category", params: { category: "apps" }, position: [1.6, 1.3, -2.8], object: [1.6, 0.92, -2.8] },
   { id: "technical", label: "Technical", hint: "Server rack", to: "/work/$category", params: { category: "technical" }, position: [3.7, 2.35, -2.95], object: [3.7, 0, -2.95] },
   { id: "experience", label: "Career Timeline", hint: "The pinboard", to: "/experience", position: [-4.3, 2.75, -0.2], object: [-4.42, 1.7, -0.2] },
-  { id: "about", label: "About me", hint: "Say hi", to: "/about", position: [-0.75, 1.95, -2.9], object: [-0.75, 0, -2.9] },
+  { id: "about", label: "About me", hint: "Say hi", to: "/about", position: [-0.75, 2.2, -2.9], object: [-0.75, 0, -2.9] },
   { id: "contact", label: "Say hello", hint: "Coffee corner", to: "/contact", position: [-3.6, 1.45, 3.05], object: [-3.6, 0.75, 3.1] },
 ];
 
