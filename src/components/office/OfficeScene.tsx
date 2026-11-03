@@ -265,7 +265,7 @@ function Person({ pulse }: { pulse: React.MutableRefObject<Pulse> }) {
       const m = o as THREE.Mesh;
       if (m.isMesh) m.castShadow = true;
     });
-    actions.idle?.reset().setLoop(THREE.LoopRepeat, Infinity).play();
+    actions["idle"]?.reset().setLoop(THREE.LoopRepeat, Infinity).play();
   }, [scene, actions]);
 
   useFrame(({ clock }) => {
@@ -274,11 +274,11 @@ function Person({ pulse }: { pulse: React.MutableRefObject<Pulse> }) {
     if (p && p.id === "about" && !nod.current) {
       const clip = animations.find((a) => a.name === "emote-yes");
       actions["emote-yes"]?.reset().setLoop(THREE.LoopOnce, 1).fadeIn(0.15).play();
-      actions.idle?.fadeOut(0.25);
+      actions["idle"]?.fadeOut(0.25);
       nod.current = { start: t, dur: clip?.duration ?? 1 };
     } else if (nod.current && t - nod.current.start > nod.current.dur + 0.15) {
       actions["emote-yes"]?.fadeOut(0.3);
-      actions.idle?.reset().fadeIn(0.3).play();
+      actions["idle"]?.reset().fadeIn(0.3).play();
       nod.current = null;
     }
   });
