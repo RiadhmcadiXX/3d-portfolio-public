@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>person diagnostic</title>
+    <title>character line-up</title>
     <script type="importmap">
       {
         "imports": {
@@ -28,42 +28,61 @@
       import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
       const q = new URLSearchParams(location.search);
+      const chars = (q.get("chars") || "character-female-a").split(",");
       const clip = q.get("clip") || "idle";
-      const scale = parseFloat(q.get("scale") || "2.089");
-      const rot = parseFloat(q.get("rot") || "0");
-      const t = parseFloat(q.get("t") || "0");
 
       const renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(600, 600);
+      renderer.setSize(1200, 700);
       document.body.appendChild(renderer.domElement);
 
       const scene = new THREE.Scene();
       scene.background = new THREE.Color("#eef3fa");
-      const cam = new THREE.PerspectiveCamera(35, 1, 0.05, 50);
-      cam.position.set(0, 1.1, 3.4);
-      cam.lookAt(0, 0.8, 0);
       scene.add(new THREE.HemisphereLight(0xffffff, 0x99aabb, 1.4));
       const dl = new THREE.DirectionalLight(0xffffff, 2);
-      dl.position.set(3, 4, 2);
+      dl.position.set(3, 5, 4);
       scene.add(dl);
 
-      const gltf = await new GLTFLoader().loadAsync("/__l5e/assets-v1/45c09299-7748-4223-b7e7-23d3395d33f6/person.glb");
-      const root = new THREE.Group();
-      root.scale.setScalar(scale);
-      root.rotation.y = rot;
-      scene.add(root);
-      root.add(gltf.scene);
+      const ground = new THREE.Mesh(
+        new THREE.PlaneGeometry(40, 20),
+        new THREE.MeshStandardMaterial({ color: 0xdfe8f3 }),
+      );
+      ground.rotation.x = -Math.PI / 2;
+      scene.add(ground);
 
-      if (clip !== "none") {
-        const mixer = new THREE.AnimationMixer(gltf.scene);
-        const c = gltf.animations.find((a) => a.name === clip);
-        const action = mixer.clipAction(c);
-        action.play();
-        mixer.setTime(t);
+      const load = new GLTFLoader();
+      const mixers = [];
+      chars.forEach(async (name, i) => {
+        const gltf = await load.loadAsync(`/models/_ptest/${name}.glb`);
+        const box = new THREE.Box3().setFromObject(gltf.scene);
+        const h = box.max.y - box.min.y || 1;
+        const g = new THREE.Group();
+        g.scale.setScalar(1.6 / h);
+        g.position.set(i * 2.2, 0, 0);
+        g.add(gltf.scene);
+        scene.add(g);
+        if (clip !== "none") {
+          const m = new THREE.AnimationMixer(gltf.scene);
+          const c = gltf.animations.find((a) => a.name === clip);
+          if (c) m.clipAction(c).play();
+          mixers.push(m);
+        }
+        window.__loaded = (window.__loaded || 0) + 1;
+      });
+
+      const cam = new THREE.PerspectiveCamera(40, 1200 / 700, 0.05, 100);
+      const cx = ((chars.length - 1) * 2.2) / 2;
+      cam.position.set(cx, 1.0, 5.6);
+      cam.lookAt(cx, 0.8, 0);
+
+      const clock = new THREE.Clock();
+      function tick() {
+        const dt = clock.getDelta();
+        mixers.forEach((m) => m.update(dt));
+        renderer.render(scene, cam);
+        if (window.__loaded === chars.length) window.__done = true;
+        requestAnimationFrame(tick);
       }
-
-      renderer.render(scene, cam);
-      window.__done = true;
+      tick();
     </script>
   </body>
 </html>
