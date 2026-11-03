@@ -16,7 +16,7 @@ export function PageShell({ eyebrow, title, children }: { eyebrow: string; title
       transition={{ duration: 0.9, ease: [0.65, 0, 0.35, 1] }}
     >
       <nav className="page-nav">
-        <Link to="/" className="back-link">← Back to the studio</Link>
+        <Link to="/" reloadDocument className="back-link">← Back to the studio</Link>
         <span className="eyebrow">Alex Morgan</span>
       </nav>
       <div className="page-inner">

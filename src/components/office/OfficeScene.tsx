@@ -354,7 +354,7 @@ function Furniture({ pulse }: { pulse: React.MutableRefObject<Pulse> }) {
   return (
     <group>
       <Model name="desk" position={[1, 0, -3.0]} rotation={Math.PI} />
-      <Model name="chairDesk" position={[1.1, 0, -1.9]} rotation={0.2} />
+      <Model name="chairDesk" position={[2.4, 0, -2.55]} rotation={1.25} />
       <Interactive id="software" pulse={pulse} position={[sw![0], 0.91, sw![2]]}>
         <Model name="laptop" rotation={Math.PI + 0.15} />
       </Interactive>
