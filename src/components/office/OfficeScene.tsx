@@ -253,8 +253,8 @@ function Greeter() {
     scene.traverse((o) => {
       if ((o as THREE.Mesh).isMesh) o.castShadow = true;
     });
-    // RobotExpressive is ~4.4 units tall; skinned bounds are unreliable, so use a fixed factor
-    return 0.36;
+    // Suited man model is ~1.87 units tall with feet at y=0; scale to ~1.6m
+    return 0.85;
   }, [scene]);
   useEffect(() => {
     const wave = actions["Wave"] ?? actions["Idle"];
