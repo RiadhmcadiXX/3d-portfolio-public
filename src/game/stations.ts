@@ -24,5 +24,6 @@ export const OBSTACLES: Box[] = [
   { minX: -0.1, maxX: 2.1, minZ: -3.5, maxZ: -2.4 }, // desk
   { minX: 3.15, maxX: 4.5, minZ: -3.5, maxZ: -2.4 }, // server rack
   { minX: -1.15, maxX: -0.35, minZ: -3.35, maxZ: -2.5 }, // person
+  { minX: 1.85, maxX: 2.9, minZ: -3.05, maxZ: -1.85 }, // desk chair
   { minX: -4.5, maxX: -2.8, minZ: 2.7, maxZ: 3.5 }, // coffee cabinet
 ];
