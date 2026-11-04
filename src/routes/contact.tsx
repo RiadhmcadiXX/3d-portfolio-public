@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "motion/react";
+import { useTranslation } from "react-i18next";
 import { PageShell, rise } from "@/components/PageShell";
 import { owner } from "@/content/portfolio";
 
@@ -18,10 +19,11 @@ export const Route = createFileRoute("/contact")({
 });
 
 function ContactPage() {
+  const { t } = useTranslation();
   return (
-    <PageShell eyebrow="Coffee corner" title="Let's make something.">
+    <PageShell eyebrow={t("studio.contact.eyebrow")} title={t("studio.contact.title")}>
       <motion.p className="page-lede" variants={rise} initial="hidden" animate="show" custom={4}>
-        Open for freelance projects and full-time roles. Coffee's on me.
+        {t("studio.contact.lede")}
       </motion.p>
       <motion.a
         href={`mailto:${owner.email}`}

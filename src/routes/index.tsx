@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { lazy, Suspense } from "react";
+import { useTranslation } from "react-i18next";
 
 const OfficeScene = lazy(() => import("@/components/office/OfficeScene"));
 
@@ -19,8 +20,9 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const { t } = useTranslation();
   return (
-    <Suspense fallback={<div className="office-loading">Unlocking the studio…</div>}>
+    <Suspense fallback={<div className="office-loading">{t("studio.loading")}</div>}>
       <OfficeScene />
     </Suspense>
   );

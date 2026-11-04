@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "motion/react";
+import { useTranslation } from "react-i18next";
 import { PageShell, rise } from "@/components/PageShell";
 import { owner } from "@/content/portfolio";
+import TechStack from "@/components/TechStack";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -18,15 +20,17 @@ export const Route = createFileRoute("/about")({
 });
 
 function AboutPage() {
+  const { t } = useTranslation();
   return (
-    <PageShell eyebrow={`${owner.title} · ${owner.location}`} title="Hi, I build rooms you can walk into.">
+    <PageShell eyebrow={`${owner.title} · ${owner.location}`} title={t("studio.about.title")}>
       <motion.p className="page-lede" variants={rise} initial="hidden" animate="show" custom={5}>
-        I design and code interactive experiences where 3D, motion and good typography meet. I model in Blender,
-        build in React and Three.js, and care about every frame.
+        {t("studio.about.lede")}
       </motion.p>
       <motion.p className="page-body" variants={rise} initial="hidden" animate="show" custom={6}>
-        This studio is my portfolio: every piece of furniture leads somewhere. Head back and try the pinboard.
+        {t("studio.about.body")}
       </motion.p>
+
+      <TechStack />
     </PageShell>
   );
 }

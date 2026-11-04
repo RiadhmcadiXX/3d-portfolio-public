@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "motion/react";
+import { useTranslation } from "react-i18next";
 import { PageShell, rise } from "@/components/PageShell";
 import { experience, skills } from "@/content/portfolio";
 
@@ -18,8 +19,9 @@ export const Route = createFileRoute("/experience")({
 });
 
 function ExperiencePage() {
+  const { t } = useTranslation();
   return (
-    <PageShell eyebrow="From the pinboard" title="Experience">
+    <PageShell eyebrow={t("studio.experience.eyebrow")} title={t("studio.experience.title")}>
       <ol className="timeline">
         {experience.map((e, i) => (
           <motion.li

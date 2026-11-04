@@ -2,6 +2,8 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { ContactShadows, Environment, Lightformer, useAnimations, useGLTF } from "@react-three/drei";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
+import { LanguageToggle } from "@/components/LanguageToggle";
 import * as THREE from "three";
 import { Model } from "./Model";
 import { STATIONS, OBSTACLES, type Station } from "@/game/stations";
@@ -165,7 +167,7 @@ function Room() {
       {/* rug */}
       <mesh rotation-x={-Math.PI / 2} position={[0.3, 0.004, 0.3]} receiveShadow>
         <planeGeometry args={[3.4, 2.4]} />
-        <meshStandardMaterial color="#c9dbf3" roughness={1} />
+        <meshStandardMaterial color="#000000" roughness={1} />
       </mesh>
     </group>
   );
@@ -235,7 +237,7 @@ function Phone() {
     <group rotation-y={-0.35}>
       <mesh position={[0, 0.006, 0]} castShadow>
         <boxGeometry args={[0.09, 0.012, 0.18]} />
-        <meshStandardMaterial color="#111827" roughness={0.3} metalness={0.5} />
+        <meshStandardMaterial color="#111827" roughness={1} metalness={0.5} />
       </mesh>
       <mesh position={[0, 0.0125, 0]} rotation-x={-Math.PI / 2}>
         <planeGeometry args={[0.08, 0.165]} />
@@ -355,9 +357,9 @@ function Furniture({ pulse }: { pulse: React.MutableRefObject<Pulse> }) {
       <Model name="desk" position={[1, 0, -3.0]} rotation={Math.PI} />
       <Model name="chairDesk" position={[2.49, 0, -2.27]} rotation={1.5} />
       <Interactive id="software" pulse={pulse} position={[sw![0], 0.91, sw![2]]}>
-        <Model name="laptop" rotation={Math.PI + 0.15} />
+        <Model name="laptop" rotation={Math.PI + 3.45} />
       </Interactive>
-      <Interactive id="apps" pulse={pulse} position={[apps![0], 0.91, apps![2]]}>
+      <Interactive id="apps" pulse={pulse}  position={[apps![0], 1, apps![2]]}>
         <Phone />
       </Interactive>
       <Model name="plantSmall1" position={[1.9, 0.91, -3.25]} />
@@ -507,6 +509,7 @@ const MOVE_PADS: { label: string; fwd: number; strafe: number; area: string }[] 
 ];
 
 export default function OfficeScene() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const input = useRef<Input>({ keys: new Set(), touch: { fwd: 0, strafe: 0 } });
   const player = useRef<Player>({ x: 0.2, z: 3.0, yaw: 0.1, pitch: -0.12 });
@@ -634,9 +637,9 @@ export default function OfficeScene() {
             className="station-anchor"
           >
             <span className={`station-tag ${nearest === s.id ? "is-active" : ""} ${target.current?.id === s.id ? "is-clicked" : ""}`}>
-              <span className="station-tag__hint">{s.hint}</span>
-              <span className="station-tag__label">{s.label}</span>
-              {nearest === s.id && <span className="station-tag__key">Press E</span>}
+              <span className="station-tag__hint">{t(`studio.stations.${s.id}.hint`)}</span>
+              <span className="station-tag__label">{t(`studio.stations.${s.id}.label`)}</span>
+              {nearest === s.id && <span className="station-tag__key">{t("studio.pressE")}</span>}
             </span>
           </button>
         ))}
@@ -645,22 +648,23 @@ export default function OfficeScene() {
       <header className="office-hud-top">
         <div>
           <p className="eyebrow">Alex Morgan · Creative Developer</p>
-          <h1 className="office-title">Welcome to the studio.</h1>
+          <h1 className="office-title">{t("studio.welcome")}</h1>
         </div>
       </header>
 
       <div className="office-help">
-        <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> walk</span>
-        <span>Drag to look</span>
-        <span>Click a label or press <kbd>E</kbd></span>
+        <LanguageToggle />
+        <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> {t("studio.walk")}</span>
+        <span>{t("studio.look")}</span>
+        <span>{t("studio.interact")} <kbd>E</kbd></span>
       </div>
 
-      <div className="office-pad" aria-label="Movement controls">
+      <div className="office-pad" aria-label={t("studio.movement")}>
         {MOVE_PADS.map((m) => (
           <button
             key={m.area}
             type="button"
-            aria-label={`Move ${m.area}`}
+            aria-label={t(`studio.pad.${m.area}`)}
             className="office-pad__btn"
             style={{ gridArea: m.area }}
             onPointerDown={(e) => {
@@ -675,7 +679,7 @@ export default function OfficeScene() {
         ))}
       </div>
 
-      {!ready && <div className="office-loading">Unlocking the studio…</div>}
+      {!ready && <div className="office-loading">{t("studio.loading")}</div>}
       <div className={`office-wipe ${leaving ? "is-on" : ""}`} />
     </div>
   );
