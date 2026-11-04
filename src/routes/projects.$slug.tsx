@@ -18,8 +18,8 @@ export const Route = createFileRoute("/projects/$slug")({
   },
   head: ({ loaderData }) => {
     const p = loaderData?.project;
-    const title = p ? `${p.name} — Project by Alex Morgan` : "Project — Alex Morgan";
-    const desc = p?.summary || "A project from Alex Morgan's portfolio.";
+    const title = p ? `${p.name} — Project by Riadh M Cadi` : "Project — Riadh M Cadi";
+    const desc = p?.summary || "A project from Riadh M Cadi's portfolio.";
     return {
       meta: [
         { title },

@@ -12,7 +12,7 @@ import { adminDeleteProject, adminListProjects, adminSetVisibility } from "@/lib
 import { CATEGORIES } from "@/lib/project-types";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
-  head: () => ({ meta: [{ title: "Projects admin — Alex Morgan Studio" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Projects admin — Riadh M Cadi Studio" }, { name: "robots", content: "noindex" }] }),
   component: AdminList,
 });
 

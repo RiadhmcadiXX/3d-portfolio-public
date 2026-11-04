@@ -11,9 +11,9 @@ export const Route = createFileRoute("/projects/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(allQuery),
   head: () => ({
     meta: [
-      { title: "All projects — Alex Morgan" },
-      { name: "description", content: "Software, websites, mobile apps and technical projects by Alex Morgan." },
-      { property: "og:title", content: "All projects — Alex Morgan" },
+      { title: "All projects — Riadh M Cadi" },
+      { name: "description", content: "Software, websites, mobile apps and technical projects by Riadh M Cadi." },
+      { property: "og:title", content: "All projects — Riadh M Cadi" },
       { property: "og:description", content: "Software, websites, mobile apps and technical projects." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

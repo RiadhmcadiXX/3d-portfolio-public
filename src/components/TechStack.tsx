@@ -117,7 +117,7 @@ const TechStack = () => {
     <section
       id="tech-stack"
       ref={sectionRef}
-      className="px-2 md:px-6 lg:px-8 py-10 md:py-6 "
+      className=" py-10  "
     >
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
         <div
@@ -125,7 +125,7 @@ const TechStack = () => {
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
-          <span className="inline-flex items-center gap-2 px-3 py-1 bg-tag text-tag-foreground rounded-full text-xs font-semibold uppercase tracking-wider mb-4">
+          <span className="inline-flex items-center gap-2 px-3 py-1 bg-brand-blue text-white rounded-full text-xs font-semibold uppercase tracking-wider mb-4">
             <Cpu size={12} />
             {t("techStack.tag")}
           </span>

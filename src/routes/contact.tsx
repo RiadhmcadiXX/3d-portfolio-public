@@ -7,9 +7,9 @@ import { owner } from "@/content/portfolio";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — Alex Morgan" },
-      { name: "description", content: "Grab a virtual coffee and get in touch with Alex Morgan about a project." },
-      { property: "og:title", content: "Contact — Alex Morgan" },
+      { title: "Contact — Riadh M Cadi" },
+      { name: "description", content: "Grab a virtual coffee and get in touch with Riadh M Cadi about a project." },
+      { property: "og:title", content: "Contact — Riadh M Cadi" },
       { property: "og:description", content: "Start a project or just say hello." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

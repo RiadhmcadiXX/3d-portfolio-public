@@ -83,7 +83,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Alex Morgan — 3D Studio Portfolio" },
+      { title: "Riadh M Cadi — 3D Studio Portfolio" },
       { name: "description", content: "A walkable 3D office portfolio." },
     ],
     links: [

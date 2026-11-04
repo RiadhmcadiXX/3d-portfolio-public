@@ -22,12 +22,12 @@ export function PageShell({ eyebrow, title, children }: { eyebrow: string; title
         <Link to="/" reloadDocument className="back-link">← {t("studio.back")}</Link>
         <span className="page-nav__end">
           <LanguageToggle />
-          <span className="eyebrow">Alex Morgan</span>
+          <span className="eyebrow">Riadh M Cadi</span>
         </span>
       </nav>
       <div className="page-inner">
         <motion.p className="eyebrow" variants={rise} initial="hidden" animate="show" custom={0}>{eyebrow}</motion.p>
-        <h1 className="page-title" aria-label={title}>
+        {/* <h1 className="page-title" aria-label={title}>
           {title.split(" ").map((w, i) => (
             <span key={i} className="word-mask">
               <motion.span
@@ -40,7 +40,7 @@ export function PageShell({ eyebrow, title, children }: { eyebrow: string; title
               </motion.span>{" "}
             </span>
           ))}
-        </h1>
+        </h1> */}
         {children}
       </div>
     </motion.main>

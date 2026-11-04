@@ -2,7 +2,6 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,9 +12,9 @@ export const Route = createFileRoute("/auth")({
   validateSearch: (s: Record<string, unknown>) => ({ redirect: typeof s["redirect"] === "string" ? s["redirect"] : undefined }),
   head: () => ({
     meta: [
-      { title: "Sign in — Alex Morgan Studio" },
+      { title: "Sign in — Riadh M Cadi Studio" },
       { name: "description", content: "Sign in to manage portfolio projects." },
-      { property: "og:title", content: "Sign in — Alex Morgan Studio" },
+      { property: "og:title", content: "Sign in — Riadh M Cadi Studio" },
       { property: "og:description", content: "Sign in to manage portfolio projects." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -52,9 +51,13 @@ function AuthPage() {
   }
 
   async function google() {
-    sessionStorage.setItem("after-auth", target);
-    const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/auth" });
-    if (r.error) toast.error(r.error.message);
+    const redirectTo = new URL("/auth", window.location.origin);
+    redirectTo.searchParams.set("redirect", target);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: redirectTo.toString() },
+    });
+    if (error) toast.error(error.message);
   }
 
   return (

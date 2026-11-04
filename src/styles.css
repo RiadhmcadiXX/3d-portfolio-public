@@ -59,6 +59,24 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-tag: var(--tag);
+  --color-tag-foreground: var(--tag-foreground);
+  --color-brand-purple: #9333ea;
+  --color-brand-teal: #1b99a7;
+  --color-brand-dark-teal: #16808c;
+  --color-brand-blue: #1a99a6;
+  --color-brand-new-blue: #0049ff;
+  --color-brand-dark-blue: #228fa8;
+  --color-brand-pink: #d946ef;
+  --color-brand-orange: #ff7442;
+  --color-brand-blue-light: #098bd6;
+  --color-brand-text-dark: #1a1d21;
+  --color-brand-background-gray: #fafafc;
+  --color-brand-green: #28a745;
+  --font-momo: "Momo Trust Display", serif;
+  --shadow-elevated: var(--shadow-elevated);
+  --animate-marquee: marquee 25s linear infinite;
+  --animate-float: float 3s ease-in-out infinite;
 }
 
 :root {
@@ -98,8 +116,21 @@
   --ink: oklch(0.22 0.02 250);
   --glass: color-mix(in oklab, var(--card) 78%, transparent);
   --shadow-soft: 0 18px 40px -18px color-mix(in oklab, var(--ink) 45%, transparent);
+  --shadow-elevated: 0 24px 60px -20px color-mix(in oklab, var(--ink) 50%, transparent);
+  --tag: oklch(0.92 0.04 300);
+  --tag-foreground: oklch(0.28 0.08 300);
   --font-display: "Instrument Serif", Georgia, serif;
   --font-body: "Work Sans", system-ui, sans-serif;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0%); }
+  to { transform: translateX(-100%); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 @layer base {

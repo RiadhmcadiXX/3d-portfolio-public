@@ -14,7 +14,7 @@ import { adminGetProject, adminSaveProject } from "@/lib/projects.functions";
 import { CATEGORIES, emptyProject, slugify, type Category, type ProjectInput } from "@/lib/project-types";
 
 export const Route = createFileRoute("/_authenticated/admin/$id")({
-  head: () => ({ meta: [{ title: "Edit project — Alex Morgan Studio" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Edit project — Riadh M Cadi Studio" }, { name: "robots", content: "noindex" }] }),
   component: EditorPage,
 });
 
@@ -213,9 +213,18 @@ function ListInput({ value, onChange, placeholder }: { value: string[]; onChange
   return <Input placeholder={placeholder} value={text} onChange={(e) => setText(e.target.value)} onBlur={() => onChange(text.split(",").map((s) => s.trim()).filter(Boolean))} />;
 }
 
+function newFileId() {
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  bytes[6] = (bytes[6]! & 0x0f) | 0x40;
+  bytes[8] = (bytes[8]! & 0x3f) | 0x80;
+  const hex = [...bytes].map((b) => b.toString(16).padStart(2, "0")).join("");
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
 async function uploadFile(file: File) {
   const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-  const path = `${crypto.randomUUID()}.${ext}`;
+  const path = `${newFileId()}.${ext}`;
   const { error } = await supabase.storage.from("project-images").upload(path, file, { contentType: file.type });
   if (error) throw error;
   return { path, url: URL.createObjectURL(file) };

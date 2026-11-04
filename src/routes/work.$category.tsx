@@ -19,8 +19,8 @@ export const Route = createFileRoute("/work/$category")({
   },
   head: ({ params }) => {
     const category = isCategory(params.category) ? params.category : null;
-    const title = `${category ? i18n.t(`studio.work.${category}.title`) : "Work"} — Alex Morgan`;
-    const desc = category ? i18n.t(`studio.work.${category}.blurb`) : "Projects by Alex Morgan.";
+    const title = `${category ? i18n.t(`studio.work.${category}.title`) : "Work"} — Riadh M Cadi`;
+    const desc = category ? i18n.t(`studio.work.${category}.blurb`) : "Projects by Riadh M Cadi.";
     return {
       meta: [
         { title },

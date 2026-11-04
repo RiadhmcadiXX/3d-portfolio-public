@@ -9,6 +9,7 @@ import { Model } from "./Model";
 import { STATIONS, OBSTACLES, type Station } from "@/game/stations";
 import { experience } from "@/content/portfolio";
 import { EYE_HEIGHT, INTERACT_DISTANCE, step, type Player } from "@/game/sim";
+import { WallPainting } from "./WallPainting";
 
 const PALETTE = {
   wall: "#f6f8fb",
@@ -359,7 +360,7 @@ function Furniture({ pulse }: { pulse: React.MutableRefObject<Pulse> }) {
       <Interactive id="software" pulse={pulse} position={[sw![0], 0.91, sw![2]]}>
         <Model name="laptop" rotation={Math.PI + 3.45} />
       </Interactive>
-      <Interactive id="apps" pulse={pulse}  position={[apps![0], 1, apps![2]]}>
+      <Interactive id="apps" pulse={pulse} position={[apps![0], 1, apps![2]]}>
         <Phone />
       </Interactive>
       <Model name="plantSmall1" position={[1.9, 0.91, -3.25]} />
@@ -622,6 +623,12 @@ export default function OfficeScene() {
           <Furniture pulse={pulse} />
           <ContactShadows position={[0, 0.01, 0]} scale={11} opacity={0.3} blur={2.4} far={2} />
           <ReadyFlag onReady={() => setReady(true)} />
+          <WallPainting
+            imagePath="/my-artwork.png"
+            position={[0, 1.8, -3.42]}
+            rotation={[0, Math.PI, 0]}
+            scale={0.05}
+          />
         </Suspense>
       </Canvas>
 
@@ -647,7 +654,7 @@ export default function OfficeScene() {
 
       <header className="office-hud-top">
         <div>
-          <p className="eyebrow">Alex Morgan · Creative Developer</p>
+          <p className="eyebrow">Riadh M Cadi · Creative Developer</p>
           <h1 className="office-title">{t("studio.welcome")}</h1>
         </div>
       </header>

@@ -8,9 +8,9 @@ export const Route = createFileRoute("/")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Alex Morgan — Walk-through 3D Studio Portfolio" },
+      { title: "Riadh M Cadi — Walk-through 3D Studio Portfolio" },
       { name: "description", content: "Walk around a 3D office and open projects, experience and contact straight from the furniture." },
-      { property: "og:title", content: "Alex Morgan — 3D Studio Portfolio" },
+      { property: "og:title", content: "Riadh M Cadi — 3D Studio Portfolio" },
       { property: "og:description", content: "A walkable 3D office portfolio built with React and Three.js." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

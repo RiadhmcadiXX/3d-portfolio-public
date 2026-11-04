@@ -19,10 +19,10 @@ export type Project = {
 };
 
 export const owner = {
-  name: "Alex Morgan",
+  name: "Riadh M Cadi",
   title: "Creative Developer",
-  email: "hello@alexmorgan.dev",
-  location: "Toronto, Canada",
+  email: "Riadhmcadi@gmail.com",
+  location: "Québec, Canada",
 };
 
 export const projects: Project[] = [

@@ -7,9 +7,9 @@ import { experience, skills } from "@/content/portfolio";
 export const Route = createFileRoute("/experience")({
   head: () => ({
     meta: [
-      { title: "Experience — Alex Morgan" },
-      { name: "description", content: "Where Alex Morgan has worked and the tools they use every day." },
-      { property: "og:title", content: "Experience — Alex Morgan" },
+      { title: "Experience — Riadh M Cadi" },
+      { name: "description", content: "Where Riadh M Cadi has worked and the tools they use every day." },
+      { property: "og:title", content: "Experience — Riadh M Cadi" },
       { property: "og:description", content: "Roles, studios and skills of a creative developer." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
