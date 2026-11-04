@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { PageShell, rise } from "@/components/PageShell";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { getPublicProject } from "@/lib/projects.functions";
@@ -40,7 +40,7 @@ export const Route = createFileRoute("/projects/$slug")({
   ),
 });
 
-function Section({ title, i, children }: { title: string; i: number; children: React.ReactNode }) {
+function Section({ title, i, children }: { title: string; i: number; children: ReactNode }) {
   return (
     <motion.section className="pd-section" variants={rise} initial="hidden" whileInView="show" viewport={{ once: true }} custom={i}>
       <h2 className="pd-h2">{title}</h2>
