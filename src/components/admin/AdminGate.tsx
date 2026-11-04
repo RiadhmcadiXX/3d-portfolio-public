@@ -14,7 +14,7 @@ export function AdminShell({ title, children }: { title: string; children: React
     await qc.cancelQueries();
     qc.clear();
     await supabase.auth.signOut();
-    navigate({ to: "/auth", replace: true });
+    navigate({ to: "/auth", search: { redirect: undefined }, replace: true });
   }
 
   return (

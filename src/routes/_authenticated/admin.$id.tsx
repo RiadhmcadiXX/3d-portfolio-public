@@ -50,7 +50,7 @@ function buildPreviews(raw: ProjectInput, signed: ProjectInput): Previews {
   return m;
 }
 
-function Editor({ id, initial, previews: initialPreviews }: { id?: string; initial: ProjectInput; previews: Previews }) {
+function Editor({ id, initial, previews: initialPreviews }: { id?: string | undefined; initial: ProjectInput; previews: Previews }) {
   const [p, setP] = useState<ProjectInput>(initial);
   const [previews, setPreviews] = useState<Previews>(initialPreviews);
   const [slugTouched, setSlugTouched] = useState(!!id);
@@ -63,7 +63,7 @@ function Editor({ id, initial, previews: initialPreviews }: { id?: string; initi
   async function save() {
     setSaving(true);
     try {
-      const res = await adminSaveProject({ data: { id, project: p } });
+      const res = await adminSaveProject({ data: id ? { id, project: p } : { project: p } });
       toast.success("Saved");
       qc.invalidateQueries({ queryKey: ["admin-projects"] });
       qc.invalidateQueries({ queryKey: ["admin-project", res.id] });
