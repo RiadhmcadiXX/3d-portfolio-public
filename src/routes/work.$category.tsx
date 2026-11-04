@@ -30,7 +30,7 @@ export const Route = createFileRoute("/work/$category")({
     };
   },
   component: WorkPage,
-  errorComponent: ({ error }) => <PageShell eyebrow="Work" title="Couldn't load"><p className="page-lede">{error.message}</p></PageShell>,
+  errorComponent: ({ error }) => <PageShell eyebrow="Work" title="Couldn't load"><p className="page-lede">{error instanceof Error ? error.message : "Something went wrong"}</p></PageShell>,
   notFoundComponent: () => <PageShell eyebrow="Work" title="Not found"><p className="page-lede">This category doesn't exist.</p></PageShell>,
 });
 

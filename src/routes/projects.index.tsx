@@ -20,7 +20,7 @@ export const Route = createFileRoute("/projects/")({
     ],
   }),
   component: ProjectsPage,
-  errorComponent: ({ error }) => <PageShell eyebrow="Work" title="Couldn't load"><p className="page-lede">{error.message}</p></PageShell>,
+  errorComponent: ({ error }) => <PageShell eyebrow="Work" title="Couldn't load"><p className="page-lede">{error instanceof Error ? error.message : "Something went wrong"}</p></PageShell>,
 });
 
 function ProjectsPage() {

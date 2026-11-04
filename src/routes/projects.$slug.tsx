@@ -32,7 +32,7 @@ export const Route = createFileRoute("/projects/$slug")({
     };
   },
   component: ProjectPage,
-  errorComponent: ({ error }) => <PageShell eyebrow="Project" title="Couldn't load"><p className="page-lede">{error.message}</p></PageShell>,
+  errorComponent: ({ error }) => <PageShell eyebrow="Project" title="Couldn't load"><p className="page-lede">{error instanceof Error ? error.message : "Something went wrong"}</p></PageShell>,
   notFoundComponent: () => (
     <PageShell eyebrow="Project" title="Not found">
       <Link to="/projects" className="next-link">See all projects →</Link>
