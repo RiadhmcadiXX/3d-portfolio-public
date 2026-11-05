@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { lazy, Suspense } from "react";
-import { useTranslation } from "react-i18next";
+import { lazy, Suspense, useEffect, useState } from "react";
+import { StudioLoading } from "@/components/office/StudioLoading";
 
 const OfficeScene = lazy(() => import("@/components/office/OfficeScene"));
 
@@ -19,11 +19,23 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+const MIN_LOADING_MS = 3000;
+
 function Index() {
-  const { t } = useTranslation();
+  const [booted, setBooted] = useState(false);
+  const [minElapsed, setMinElapsed] = useState(false);
+
+  useEffect(() => {
+    const id = window.setTimeout(() => setMinElapsed(true), MIN_LOADING_MS);
+    return () => window.clearTimeout(id);
+  }, []);
+
   return (
-    <Suspense fallback={<div className="office-loading">{t("studio.loading")}</div>}>
-      <OfficeScene />
-    </Suspense>
+    <>
+      <Suspense fallback={null}>
+        <OfficeScene onBoot={() => setBooted(true)} />
+      </Suspense>
+      {!(booted && minElapsed) && <StudioLoading />}
+    </>
   );
 }

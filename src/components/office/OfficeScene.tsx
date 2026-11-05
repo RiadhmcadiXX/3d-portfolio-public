@@ -514,7 +514,7 @@ const MOVE_PADS: { label: string; fwd: number; strafe: number; area: string }[] 
   { label: "→", fwd: 0, strafe: 1, area: "right" },
 ];
 
-export default function OfficeScene() {
+export default function OfficeScene({ onBoot }: { onBoot?: () => void }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const input = useRef<Input>({ keys: new Set(), touch: { fwd: 0, strafe: 0 } });
@@ -627,7 +627,12 @@ export default function OfficeScene() {
         <Suspense fallback={null}>
           <Furniture pulse={pulse} />
           <ContactShadows position={[0, 0.01, 0]} scale={11} opacity={0.3} blur={2.4} far={2} />
-          <ReadyFlag onReady={() => setReady(true)} />
+          <ReadyFlag
+          onReady={() => {
+            setReady(true);
+            onBoot?.();
+          }}
+        />
           <WallPainting
             imagePath="/my-artwork.png"
             position={[0, 1.8, -3.42]}
@@ -691,7 +696,6 @@ export default function OfficeScene() {
         ))}
       </div>
 
-      {!ready && <div className="office-loading">{t("studio.loading")}</div>}
       <div className={`office-wipe ${leaving ? "is-on" : ""}`} />
     </div>
   );

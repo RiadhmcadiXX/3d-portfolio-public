@@ -158,7 +158,8 @@ kbd { display: inline-grid; place-items: center; min-width: 1.4rem; height: 1.4r
 .lang-toggle button { padding: 0.28rem 0.65rem; font-size: 0.68rem; letter-spacing: 0.12em; font-weight: 600; color: var(--ink); }
 .lang-toggle button.is-active { background: var(--primary); color: var(--primary-foreground); }
 .office-help .lang-toggle { box-shadow: none; background: color-mix(in oklab, var(--background) 70%, transparent); }
-.office-loading { position: fixed; inset: 0; display: grid; place-items: center; background: var(--background); font-family: var(--font-display); font-size: 2rem; color: var(--ink); animation: pulse-soft 1.6s ease-in-out infinite; }
+.office-loading { position: fixed; inset: 0; display: grid; place-items: center; background: var(--background); z-index: 20; }
+.office-loading__lottie { width: min(420px, 80vw); height: min(420px, 80vw); }
 .office-wipe { position: fixed; inset: 0; background: var(--background); clip-path: circle(0% at 50% 50%); transition: clip-path 0.5s cubic-bezier(0.65,0,0.35,1); pointer-events: none; }
 .office-wipe.is-on { clip-path: circle(150% at 50% 50%); }
 .office-pad { position: absolute; left: 1.5rem; bottom: 5rem; display: none; grid-template-areas: ". up ." "left down right"; gap: 0.4rem; }
