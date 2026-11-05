@@ -119,8 +119,8 @@
   --shadow-elevated: 0 24px 60px -20px color-mix(in oklab, var(--ink) 50%, transparent);
   --tag: oklch(0.92 0.04 300);
   --tag-foreground: oklch(0.28 0.08 300);
-  --font-display: "Instrument Serif", Georgia, serif;
-  --font-body: "Work Sans", system-ui, sans-serif;
+  --font-display: "Momo Trust Display", serif;
+  --font-body: "Momo Trust Display", serif;
 }
 
 @keyframes marquee {
@@ -200,9 +200,12 @@ kbd { display: inline-grid; place-items: center; min-width: 1.4rem; height: 1.4r
 .timeline { display: flex; flex-direction: column; gap: 0; margin-top: 1rem; border-top: 1px solid var(--border); }
 .timeline__item { display: grid; grid-template-columns: minmax(8rem, 12rem) 1fr; gap: 1.5rem; padding: 2rem 0; border-bottom: 1px solid var(--border); }
 .timeline__years { font-size: 0.85rem; color: var(--muted-foreground); padding-top: 0.6rem; }
-.timeline__role { font-family: var(--font-display); font-size: 2rem; color: var(--ink); line-height: 1.1; }
+.timeline__role { font-family: var(--font-display); font-size: clamp(1.35rem, 2.4vw, 2rem); color: var(--ink); line-height: 1.15; }
 .timeline__company { color: var(--primary); font-weight: 500; margin-top: 0.2rem; }
-.timeline__text { color: var(--muted-foreground); margin-top: 0.5rem; max-width: 36rem; }
+.timeline__points { margin-top: 0.75rem; padding-left: 1.15rem; max-width: 42rem; display: grid; gap: 0.4rem; color: var(--muted-foreground); line-height: 1.5; list-style: disc; }
+@media (max-width: 640px) {
+  .timeline__item { grid-template-columns: 1fr; gap: 0.35rem; }
+}
 
 
 .work-grid { display: grid; gap: 1rem; margin-top: 2rem; }

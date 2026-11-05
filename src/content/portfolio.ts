@@ -97,10 +97,109 @@ export const projects: Project[] = [
   },
 ];
 
-export const experience = [
-  { years: "2024 — now", company: "Northlight Studio", role: "Senior Creative Developer", text: "Interactive 3D sites and product experiences for global brands." },
-  { years: "2021 — 2024", company: "Parcel Labs", role: "Front-end Engineer", text: "Design systems and data-heavy dashboards used by 200+ teams." },
-  { years: "2019 — 2021", company: "Freelance", role: "Designer & Developer", text: "Websites, motion and identity for small studios and startups." },
+export type Experience = {
+  years: string;
+  company: string;
+  role: string;
+  /** Short label drawn on the office pinboard. */
+  pin: string;
+  points: string[];
+};
+
+export const experience: Experience[] = [
+  {
+    years: "2023 — Present",
+    company: "Self-employed",
+    role: "Independent Software and Web Developer",
+    pin: "Independent Developer",
+    points: [
+      "Design and develop custom web, mobile, and desktop applications for small business clients and personal projects.",
+      "Develop frontend and backend features using C#, .NET, React, TypeScript, Node.js, and REST APIs.",
+      "Integrate Stripe payment processing into multiple client websites and applications.",
+      "Modernize legacy applications by migrating them to more maintainable technology stacks based on React and .NET.",
+      "Perform large-scale data migrations from SQL Server and MongoDB to PostgreSQL.",
+      "Migrate data from Google Sheets and other sources into structured SQL and PostgreSQL databases.",
+      "Integrate AI APIs, including OpenAI and other large language model APIs, into client applications.",
+    ],
+  },
+  {
+    years: "2025",
+    company: "COGIWEB",
+    role: "Programmer Analyst Intern",
+    pin: "Programmer Analyst",
+    points: [
+      "Developed and modified application features using C#, .NET, JavaScript, and ASPX.",
+      "Investigated and fixed software bugs and application issues.",
+      "Created and optimized SQL Server queries.",
+      "Used Entity Framework Core to access data and manage database migrations.",
+      "Developed reusable pages and components.",
+      "Participated in functional and unit testing to validate application behaviour.",
+      "Deployed and verified application changes using Jenkins and DevOps tools.",
+      "Collaborated with team members to understand requirements.",
+    ],
+  },
+  {
+    years: "2022 — 2025",
+    company: "Walmart",
+    role: "Electronics Department Associate",
+    pin: "Electronics Associate",
+    points: [
+      "Provided customer service and helped customers select mobile devices, plans, and electronic accessories based on their needs.",
+      "Explained technical product features and recommended appropriate solutions.",
+    ],
+  },
+  {
+    years: "2021 — 2022",
+    company: "University graduation internship",
+    role: "Mobile Developer — Mobile Delivery Application",
+    pin: "Mobile Developer",
+    points: [
+      "Worked with team members to implement project requirements and deliver the mobile delivery application.",
+    ],
+  },
+  {
+    years: "2017 — 2018",
+    company: "Algerian Red Crescent",
+    role: "IT Technician",
+    pin: "IT Technician",
+    points: [
+      "Installed, configured, and maintained computer equipment.",
+      "Troubleshot hardware and software issues in Red Crescent facilities.",
+    ],
+  },
+  {
+    years: "2017 — 2018",
+    company: "IRepair",
+    role: "IT Repair and Support Technician",
+    pin: "Support Technician",
+    points: [
+      "Diagnosed and repaired mobile devices, including screens, batteries, and software issues.",
+      "Performed Windows installation, software installation, computer formatting, and troubleshooting.",
+    ],
+  },
+  {
+    years: "2016 — 2018",
+    company: "Phone Store",
+    role: "Mobile Phone and Accessories Sales Associate",
+    pin: "Sales Associate",
+    points: [
+      "Assisted customers with mobile phones, plans, accessories, chargers, and headphones.",
+      "Recommended products based on customer needs and budget.",
+    ],
+  },
 ];
 
-export const skills = ["React", "TypeScript", "Three.js", "Blender", "GLSL", "Motion design", "Node", "Figma"];
+export const skills = [
+  "C#",
+  ".NET",
+  "React",
+  "TypeScript",
+  "Node.js",
+  "JavaScript",
+  "REST APIs",
+  "PostgreSQL",
+  "SQL Server",
+  "Entity Framework",
+  "Stripe",
+  "Jenkins",
+];

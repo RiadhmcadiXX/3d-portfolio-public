@@ -63,42 +63,34 @@ function pinboardTexture() {
     g.fillRect(Math.random() * 1024, Math.random() * 640, 3, 3);
   }
   g.fillStyle = "#1d3557";
-  g.font = "600 44px sans-serif";
-  g.fillText("CAREER TIMELINE", 60, 80);
+  g.font = '600 40px "Momo Trust Display", serif';
+  g.textBaseline = "alphabetic";
+  g.fillText("CAREER TIMELINE", 56, 64);
+  const items = experience.slice();
+  const top = 108;
+  const rowH = (640 - top - 24) / items.length;
   g.strokeStyle = "#2f6fd6";
   g.lineWidth = 6;
   g.beginPath();
-  g.moveTo(80, 330);
-  g.lineTo(950, 330);
+  g.moveTo(78, top + 6);
+  g.lineTo(78, top + rowH * (items.length - 1) + 6);
   g.stroke();
-  const items = experience.slice().reverse();
   items.forEach((e, i) => {
-    const x = 70 + i * 310;
-    const y = i % 2 ? 360 : 130;
-    g.save();
-    g.translate(x + 130, y + 90);
-    g.rotate((i - 1) * 0.04);
+    const y = top + i * rowH;
     g.fillStyle = i % 2 ? "#ffffff" : "#dbe9ff";
-    g.shadowColor = "rgba(0,0,0,0.2)";
-    g.shadowBlur = 12;
-    g.fillRect(-130, -90, 260, 180);
+    g.shadowColor = "rgba(0,0,0,0.14)";
+    g.shadowBlur = 8;
+    g.fillRect(108, y - 18, 860, rowH - 16);
     g.shadowBlur = 0;
     g.fillStyle = "#2f6fd6";
     g.beginPath();
-    g.arc(0, -78, 10, 0, Math.PI * 2);
+    g.arc(78, y + 8, 9, 0, Math.PI * 2);
     g.fill();
     g.fillStyle = "#1d3557";
-    g.font = "600 24px sans-serif";
-    g.fillText(e.years, -112, -36);
-    g.font = "700 26px sans-serif";
-    g.fillText(e.company, -112, 4, 230);
-    g.font = "20px sans-serif";
-    g.fillText(e.role, -112, 40, 230);
-    g.restore();
-    g.fillStyle = "#2f6fd6";
-    g.beginPath();
-    g.arc(x + 130, 330, 12, 0, Math.PI * 2);
-    g.fill();
+    g.font = '700 30px "Momo Trust Display", serif';
+    g.textAlign = "left";
+    g.textBaseline = "middle";
+    g.fillText(e.pin, 132, y + 8);
   });
   const t = new THREE.CanvasTexture(c);
   t.colorSpace = THREE.SRGBColorSpace;
@@ -175,7 +167,20 @@ function Room() {
 }
 
 function Pinboard() {
-  const tex = useMemo(pinboardTexture, []);
+  const [tex, setTex] = useState<THREE.CanvasTexture | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    let texture: THREE.CanvasTexture | null = null;
+    document.fonts.load('40px "Momo Trust Display"').finally(() => {
+      if (cancelled) return;
+      texture = pinboardTexture();
+      setTex(texture);
+    });
+    return () => {
+      cancelled = true;
+      texture?.dispose();
+    };
+  }, []);
   return (
     <group position={[-W / 2 + 0.04, 1.7, -0.2]} rotation-y={Math.PI / 2}>
       <mesh castShadow>

@@ -25,7 +25,7 @@ function ExperiencePage() {
       <ol className="timeline">
         {experience.map((e, i) => (
           <motion.li
-            key={e.company}
+            key={`${e.role}-${e.company}`}
             className="timeline__item"
             initial={{ opacity: 0, x: -40 }}
             animate={{ opacity: 1, x: 0 }}
@@ -35,7 +35,11 @@ function ExperiencePage() {
             <div>
               <h2 className="timeline__role">{e.role}</h2>
               <p className="timeline__company">{e.company}</p>
-              <p className="timeline__text">{e.text}</p>
+              <ul className="timeline__points">
+                {e.points.map((point) => (
+                  <li key={point}>{point}</li>
+                ))}
+              </ul>
             </div>
           </motion.li>
         ))}
