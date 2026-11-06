@@ -6,6 +6,9 @@ import { owner } from "@/content/portfolio";
 import TechStack from "@/components/TechStack";
 import Hero from "@/components/Hero";
 import { useState } from "react";
+import { GitHubHeatmap } from "@/components/GitHubHeatmap";
+import { getGitHubContributions } from "@/lib/github.functions";
+
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -18,11 +21,19 @@ export const Route = createFileRoute("/about")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  loader: async () => {
+    const calendar = await getGitHubContributions();
+    return { calendar }
+  },
   component: AboutPage,
 });
 
 function AboutPage() {
   const { t } = useTranslation();
+  
+  const { calendar } = Route.useLoaderData();
+
+
   const [isVisible, setIsVisible] = useState(true);
   return (
     <PageShell eyebrow={`${owner.title} · ${owner.location}`} title={t("studio.about.title")}>
@@ -53,7 +64,9 @@ function AboutPage() {
         {t("studio.about.body")}
       </motion.p>
 
+      <GitHubHeatmap calendar={calendar} />
       <TechStack />
+
     </PageShell>
   );
 }

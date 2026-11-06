@@ -12,8 +12,8 @@ import { EYE_HEIGHT, INTERACT_DISTANCE, step, type Player } from "@/game/sim";
 import { WallPainting } from "./WallPainting";
 
 const PALETTE = {
-  wall: "#f6f8fb",
-  wallAccent: "#2f6fd6",
+  wall: "#1b99a7",
+  wallAccent: "#1b99a7",
   trim: "#1d3557",
   sky: "#cfe6ff",
   navy: "#1d3557",
@@ -257,22 +257,24 @@ function Phone() {
  * The animated person by the desk. Kenney Mini Characters ship rigged with
  * built-in clips, so "idle" loops forever and "emote-yes" nods on click.
  */
-const PERSON_HEIGHT = 1.62;
+const PERSON_HEIGHT = 0.9;
 /** The file's standing bbox is 0.7755 units tall with feet at y=0 (read from its accessors). */
 const PERSON_SCALE = PERSON_HEIGHT / 0.7755;
 
 function Person({ pulse }: { pulse: React.MutableRefObject<Pulse> }) {
-  const { scene, animations } = useGLTF("/models/person.glb");
+  const { scene, animations } = useGLTF("/models/racerBlue.glb");
   const ref = useRef<THREE.Group>(null);
   const { actions } = useAnimations(animations, ref);
   const nod = useRef<{ start: number; dur: number } | null>(null);
+
+  const CLIP = "Armature|mixamo.com|Layer0";
 
   useEffect(() => {
     scene.traverse((o) => {
       const m = o as THREE.Mesh;
       if (m.isMesh) m.castShadow = true;
     });
-    actions["idle"]?.reset().setLoop(THREE.LoopRepeat, Infinity).play();
+    actions[CLIP]?.reset().setLoop(THREE.LoopRepeat, Infinity).play();
   }, [scene, actions]);
 
   useFrame(({ clock }) => {

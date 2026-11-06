@@ -383,8 +383,8 @@ const resources = {
         movement: "Movement controls",
         pad: { up: "Move forward", down: "Move back", left: "Move left", right: "Move right" },
         stations: {
-          software: { label: "Software & Web", hint: "The laptop" },
-          apps: { label: "Mobile Apps", hint: "The phone" },
+          software: { label: "My Software & Web Projects", hint: "My Computer" },
+          apps: { label: "My Mobile Apps", hint: "My Phone" },
           technical: { label: "Technical", hint: "Server rack" },
           experience: { label: "Career Timeline", hint: "The pinboard" },
           about: { label: "About me", hint: "Say hi" },
