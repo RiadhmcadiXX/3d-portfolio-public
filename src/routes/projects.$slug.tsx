@@ -5,6 +5,7 @@ import { useState, type ReactNode } from "react";
 import { PageShell, rise } from "@/components/PageShell";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { getPublicProject } from "@/lib/projects.functions";
+import { PhoneFrame } from "@/components/PhoneFrame";
 import { CATEGORIES } from "@/lib/project-types";
 
 const projectQuery = (slug: string) =>
@@ -76,9 +77,18 @@ function ProjectPage() {
           )}
         </div>
         {p.cover_image_url && (
-          <motion.button type="button" className="pd-cover" onClick={() => setZoom({ src: p.cover_image_url!, alt: p.name })} variants={rise} initial="hidden" animate="show" custom={4}>
-            <img src={p.cover_image_url} alt={p.name} />
-          </motion.button>
+          <motion.div className="pd-mobile" variants={rise} initial="hidden" animate="show" custom={4}>
+            {p.category === "apps" && (
+              <PhoneFrame>
+                <button type="button" className="phone-frame__open" onClick={() => setZoom({ src: p.cover_image_url!, alt: p.name })}>
+                  <img src={p.cover_image_url} alt="" />
+                </button>
+              </PhoneFrame>
+            )}
+            <button type="button" className="pd-cover" onClick={() => setZoom({ src: p.cover_image_url!, alt: p.name })}>
+              <img src={p.cover_image_url} alt={p.name} />
+            </button>
+          </motion.div>
         )}
       </div>
 
@@ -146,9 +156,16 @@ function ProjectPage() {
               <ul className="tag-list">{p.mobile_app.platforms.map((t) => <li key={t} className="tag">{t}</li>)}</ul>
             </div>
             {p.mobile_app.image && (
-              <button type="button" className="pd-cover" onClick={() => setZoom({ src: p.mobile_app!.image!, alt: "Mobile app" })}>
-                <img src={p.mobile_app.image} alt="Mobile app" loading="lazy" />
-              </button>
+              <div className="pd-mobile">
+                <PhoneFrame>
+                  <button type="button" className="phone-frame__open" onClick={() => setZoom({ src: p.mobile_app!.image!, alt: "Mobile app" })}>
+                    <img src={p.mobile_app.image} alt="Mobile app" loading="lazy" />
+                  </button>
+                </PhoneFrame>
+                <button type="button" className="pd-cover" onClick={() => setZoom({ src: p.mobile_app!.image!, alt: "Mobile app" })}>
+                  <img src={p.mobile_app.image} alt="Mobile app" loading="lazy" />
+                </button>
+              </div>
             )}
           </div>
         </Section>

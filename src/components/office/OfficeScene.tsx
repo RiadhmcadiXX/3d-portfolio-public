@@ -377,7 +377,7 @@ function Furniture({ pulse }: { pulse: React.MutableRefObject<Pulse> }) {
       <Interactive id="experience" pulse={pulse} position={[0, 0, 0]}>
         <Pinboard />
       </Interactive>
-      <Interactive id="about" pulse={pulse} position={about!}>
+      <Interactive id="about" pulse={pulse} position={[-2.5, 0, -3.0]}>
         <Person pulse={pulse} />
       </Interactive>
       <Model name="cabinetTelevision" position={[-3.6, 0, 3.1]} rotation={Math.PI} />

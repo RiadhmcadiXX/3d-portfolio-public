@@ -229,7 +229,14 @@ kbd { display: inline-grid; place-items: center; min-width: 1.4rem; height: 1.4r
 .project-card__body h2 { font-family: var(--font-display); font-size: 1.9rem; color: var(--ink); margin: 0.2rem 0 0.3rem; }
 .project-card__body p { color: var(--muted-foreground); }
 .pd-hero { display: grid; gap: 2.5rem; align-items: center; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); }
-.pd-cover { border-radius: calc(var(--radius) * 2); overflow: hidden; border: 1px solid var(--border); background: var(--card); box-shadow: var(--shadow-soft); cursor: zoom-in; }
+.pd-mobile { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1.5rem; }
+.phone-frame { position: relative; width: min(100%, 16.5rem); flex: 0 0 auto; }
+.phone-frame__shot { position: absolute; left: 3.61%; top: 1.42%; width: 92.77%; height: 97.15%; border-radius: 13% / 6.1%; overflow: hidden; background: #030303; }
+.phone-frame__open { display: block; width: 100%; height: 100%; cursor: zoom-in; }
+.phone-frame__open img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.phone-frame__bezel { position: relative; z-index: 1; pointer-events: none; }
+.phone-frame__bezel svg { display: block; width: 100%; height: auto; }
+.pd-cover { border-radius: calc(var(--radius) * 2); overflow: hidden; border: 1px solid var(--border); background: var(--card); box-shadow: var(--shadow-soft); cursor: zoom-in; flex: 1 1 16rem; }
 .pd-cover img { width: 100%; height: auto; display: block; }
 .pd-visit { display: inline-block; margin-top: 1.5rem; padding: 0.75rem 1.4rem; border-radius: 999px; background: var(--primary); color: var(--primary-foreground); font-weight: 500; transition: transform 0.3s; }
 .pd-visit:hover { transform: translateY(-2px); }

@@ -64,7 +64,7 @@ function AboutPage() {
         {t("studio.about.body")}
       </motion.p>
 
-      <GitHubHeatmap calendar={calendar} />
+      {/* <GitHubHeatmap calendar={calendar} /> */}
       <TechStack />
 
     </PageShell>
